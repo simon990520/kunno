@@ -13,7 +13,7 @@ const SelectCategory = () => {
   };
   return (
     <div className="px-10 md:px-20">
-      <h2 className="my-5">Select the course category</h2>
+      <h2 className="my-5">Selecciona la categoría del curso</h2>
       <div className="grid grid-cols-3 gap-10  ">
         {CategoryList.map((item, index) => (
           <div
@@ -23,7 +23,7 @@ const SelectCategory = () => {
             }`}
             onClick={() => handleCategoryChange(item.name)}
           >
-            <Image rel={"category"} width={50} height={50} />
+            <Image rel={"category"} src="/logo.png" width={50} height={50} />
             <h2>{item.name}</h2>
           </div>
         ))}

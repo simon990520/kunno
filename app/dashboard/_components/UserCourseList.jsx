@@ -34,7 +34,7 @@ const UserCourseList = () => {
   }
   return (
     <div className='mt-5'>
-      <h2 className='font-medium text-xl'>My Ai Courses..</h2>
+      <h2 className='font-medium text-xl'>Mis cursos</h2>
       <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-col-4 gap-5 mt-3'>
         {/* {
           courseList?.length>0?courseList.map((course, index)=>(
@@ -61,7 +61,7 @@ const UserCourseList = () => {
         ) : (
           // Show "No courses available" after skeleton and if no courses found
           <div className="flex items-center justify-center">
-            <h2>No course Availble </h2>
+            <h2>Aun no tienes cursos</h2>
           </div>
         )}
       </div>

@@ -32,19 +32,19 @@ const Sidebar = () => {
   const menu = [
     {
       id: 1,
-      name: "home",
+      name: "Inicio",
       icon: <HiOutlineHome />,
       path: "/dashboard",
     },
     {
       id: 2,
-      name: "Explore",
+      name: "Explorar",
       icon: <HiOutlineSquare3Stack3D />,
       path: "/dashboard/explore",
     },
     {
       id: 3,
-      name: "Upgrade",
+      name: "PRO",
       icon: <HiOutlineShieldCheck />,
       path: "/dashboard/upgrade",
     },
@@ -61,7 +61,7 @@ const Sidebar = () => {
 
     {
       id: 4,
-      name: "Logout",
+      name: "Salir",
       icon: <CiPower />,
       path: "/dashboard/logout",
       isLogout: true,
@@ -122,12 +122,12 @@ const Sidebar = () => {
             <Progress value={(courseCount / maxCourses) * 100} />
           )}
           {isAdmin
-            ? `Courses Created: ${courseCount}`
-            : `${courseCount} out of ${maxCourses} courses created`}
+            ? `Cursos creados: ${courseCount}`
+            : `${courseCount} de ${maxCourses} cursos creados`}
         </h2>
         {!isAdmin && needsUpgrade && (
           <h2 className="text-xs text-gray-500">
-            Upgrade your plan to unlimted course generate
+            Actualiza tu plan para generar cursos ilimitados.
           </h2>
         )}
       </div>

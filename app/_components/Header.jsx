@@ -10,7 +10,7 @@ const Header = () => {
   return (
     <>
      <Head>
-        <title>AI Course Generator - Create Personalized AI Courses</title>
+        <title>Kunno - Crea cursos personalizados con IA.</title>
         <meta name="description" content="Generate personalized AI courses with our easy-to-use tool. Explore various topics and create your own curriculum today!" />
         <meta name="keywords" content="AI, Course Generator, Online Learning, Educational Tool, Machine Learning, Deep Learning" />
         <meta name="author" content="Pankaj Kumar Pandey" />
@@ -27,16 +27,13 @@ const Header = () => {
     <div className="flex justify-between p-5 shadow-sm items-center">
       <div className="flex items-center gap-2">
       <Link  href={'/'}  className="flex justify-center items-center gap-2">
-      <Image src={'/logo.png'} width={44} height={44} /> <span className="font-bold text-xl">AI Course Generator</span>
+      <span className="font-bold text-xl">Kunno</span>
       </Link>
       </div>
-      <div className="flex justify-center items-center gap-10 cursor-pointer">
-       <Link href={"https://github.com/mrpankajpandey/ai-course-generator" }>
-         <RxGithubLogo className="text-3xl"/>
-       </Link>          
+      <div className="flex justify-center items-center gap-10 cursor-pointer">         
       <Link href={'/dashboard'} >
 
-      <Button variant="startButton" > Get started</Button>
+      <Button variant="startButton" > ¡Empieza ahora! </Button>
       </Link>
       </div>
     </div>

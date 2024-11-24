@@ -17,12 +17,12 @@ const Addcourse = () => {
   return (
     <div  className='flex justify-between items-center'>
         <div>
-            <h2 className='text-xl'>Hello, <span className='font-bold'> {user?.fullName} </span> </h2>
-            <p className='text-sm text-gray-500'>Create new course with Ai, Share with friends and Earn form it.</p>
+            <h2 className='text-xl'>¡Bienvenido de nuevo, <span className='font-bold'> {user?.fullName} !</span> </h2>
+            <p className='text-sm text-gray-500'>Crea nuevos cursos con IA, compártelos con amigos, pefecto para automatas.</p>
         </div>
 
         <Link href={destination}>
-        <Button variant="startButton">+ Create AI Course</Button>
+        <Button variant="startButton">+ crear curso con IA</Button>
         </Link>
         
     </div>

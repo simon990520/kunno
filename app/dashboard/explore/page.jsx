@@ -35,8 +35,8 @@ const Explore = () => {
   };
   return (
     <div>
-      <h2 className="font-bold text-3xl">Explore More Projects</h2>
-      <p>Explore more project build with AI by other users</p>
+      <h2 className="font-bold text-3xl">Explorar mas cursos</h2>
+      <p>Explora más proyectos creados con IA por otros usuarios.</p>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-col-4 gap-5 mt-3">
         {/* {
           courseList?.length>0?courseList.map((course, index)=>(
@@ -64,7 +64,7 @@ const Explore = () => {
         ) : (
           // Show "No courses available" after skeleton and if no courses found
           <div className="flex items-center justify-center">
-            <h2>No course Availble </h2>
+            <h2>No hay cursos disponibles. </h2>
           </div>
         )}
       </div>

@@ -18,12 +18,11 @@ const TopicDescription = () => {
        */}
       <div className="mt-5">
         <label>
-          💡 Write a topic for which you want to generate a course (e.g., Python
-          Course, Yoga, etc.)
+          💡 Escribe un tema para el que quieras generar un curso (por ejemplo, Curso de Python, Yoga, etc.)
         </label>
         <Input
           className="h-14 text-xl"
-          placeholder={"topic"}
+          placeholder={"Titulo"}
           defaultValue = {userCourseInput?.topic}
           onChange={(e) => handleInputChange("topic", e.target.value)}
         />
@@ -32,11 +31,10 @@ const TopicDescription = () => {
       <div className="mt-5 ">
         <label htmlFor="">
           {" "}
-          🔥Tell us more About Your course , What you want to include in the
-          course(Optional)
+          🔥Cuéntanos más sobre tu curso, ¿qué te gustaría incluir en él? (Opcional)
         </label>
         <Textarea
-          placeholder="About your Course"
+          placeholder="Cuéntanos más"
           className="h-24 text-xl"
           defaultValue = {userCourseInput?.description}
           onChange={(e) => handleInputChange("description", e.target.value)}

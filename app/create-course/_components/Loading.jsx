@@ -24,7 +24,7 @@ const Loading = ({loading}) => {
       <AlertDialogDescription>
         <div className='flex items-center flex-col py-12'>
             <Image src={'/LoadingCourse.gif'} width={100} height={100} />
-            <h2>Please wait... Ai working on your Course.</h2>
+            <h2>Por favor espera... La IA está trabajando en tu curso.</h2>
         </div>
       </AlertDialogDescription>
     </AlertDialogHeader>

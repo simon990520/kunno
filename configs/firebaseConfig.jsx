@@ -9,13 +9,12 @@ import { getStorage } from "firebase/storage";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: "ai-course-generator-6004a.firebaseapp.com",
-  projectId: "ai-course-generator-6004a",
-  storageBucket: "ai-course-generator-6004a.appspot.com",
-  messagingSenderId: "632639169046",
-  appId: "1:632639169046:web:c06169571d50696e91cb37",
-
-  measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS,
+  authDomain: "kunno-dd4aa.firebaseapp.com",
+  projectId: "kunno-dd4aa",
+  storageBucket: "kunno-dd4aa.firebasestorage.app",
+  messagingSenderId: "5541256538",
+  appId: "1:5541256538:web:ea8a429c07261618106763",
+  measurementId: "G-KQLSJQV8WL"
 };
 
 // Initialize Firebase

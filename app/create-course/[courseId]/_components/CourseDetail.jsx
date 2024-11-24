@@ -8,28 +8,28 @@ const CourseDetail = ({ course }) => {
         <div className="flex gap-2">
           <HiOutlineChartBar className="text-4xl text-primary" />
           <div>
-            <h2 className="text-xs text-gray-500">Skill Level </h2>
+            <h2 className="text-xs text-gray-500">Nivel de habilidad </h2>
             <h2 className="font-medium text-lg">{course?.level}</h2>
           </div>
         </div>
         <div className="flex gap-2">
           <HiOutlineClock className="text-4xl text-primary" />
           <div>
-            <h2 className="text-xs text-gray-500">Duration </h2>
+            <h2 className="text-xs text-gray-500">Duración </h2>
             <h2 className="font-medium text-lg">{course?.courseOutput?.course?.duration}</h2>
           </div>
         </div>
         <div className="flex gap-2">
           <HiOutlineBookOpen className="text-4xl text-primary" />
           <div>
-            <h2 className="text-xs text-gray-500">No of Chapter </h2>
+            <h2 className="text-xs text-gray-500">Número de capítulos </h2>
             <h2 className="font-medium text-lg">{course?.courseOutput?.course?.noOfChapters}</h2>
           </div>
         </div>
         <div className="flex gap-2">
           <HiOutlinePlay className="text-4xl text-primary" />
           <div>
-            <h2 className="text-xs text-gray-500">Include Video </h2>
+            <h2 className="text-xs text-gray-500">Incluir video</h2>
             <h2 className="font-medium text-lg">{course?.includeVideo}</h2>
           </div>
         </div>

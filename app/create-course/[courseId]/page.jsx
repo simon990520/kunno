@@ -109,7 +109,7 @@ const courseLayout = ({ params }) => {
 
   return (
     <div className="h-screen w-full mt-10 px-7 md:px-20 lg:px-44">
-      <h2 className="font-bold text-center text-2xl">Course Layout</h2>
+      <h2 className="font-bold text-center text-2xl">Diseño del curso</h2>
 
       <Loading loading={loading} />
 
@@ -123,7 +123,7 @@ const courseLayout = ({ params }) => {
       <ChapterList course={course} refreshData={() => GetCourse()} />
 
       <Button disabled={!isCourseValid} onClick={GenerateChapterContent} className="my-10">
-        Generate Course Content
+        Generar contenido del curso
       </Button>
       <Toaster />
     </div>

@@ -14,18 +14,18 @@ const AboutUs = () => {
         <link rel="canonical" href="https://www.yourwebsite.com/about-us" />
       </Head>
     <div className="container mx-auto px-4 py-8">
-    <h1 className="text-2xl font-bold mb-4">About Us</h1>
+    <h1 className="text-2xl font-bold mb-4">Quiénes Somos</h1>
     <p className="mb-4 text-xl">
-      Welcome to AI Course Generator, your ultimate tool for creating personalized AI courses. Our mission is to simplify the learning process by leveraging the power of artificial intelligence to provide tailored educational experiences for users of all levels.
+      Bienvenido a AI Course Generator, tu herramienta definitiva para crear cursos personalizados con IA. Nuestra misión es simplificar el proceso de aprendizaje aprovechando el poder de la inteligencia artificial para ofrecer experiencias educativas hechas a la medida para usuarios de todos los niveles.
     </p>
     <p className="mb-4 text-xl">
-      At AI Course Generator, we believe that everyone should have access to high-quality education. Our platform uses the Gemini API to generate comprehensive course content that meets the needs of students and professionals alike. Whether you are a beginner looking to learn the basics of AI or an experienced practitioner seeking advanced topics, we have something for you.
+      En AI Course Generator, creemos que todos deberían tener acceso a una educación de alta calidad. Nuestra plataforma utiliza la API de Gemini para generar contenido de cursos completo que satisface las necesidades tanto de estudiantes como de profesionales. Ya sea que seas un principiante que busca aprender lo básico de la IA o un experto en busca de temas avanzados, tenemos algo para ti.
     </p>
     <p className="mb-4 text-xl">
-      Our team consists of passionate educators and AI enthusiasts dedicated to enhancing the learning experience. We continually update our courses to reflect the latest advancements in technology and education, ensuring that our users receive the best possible resources.
+    Nuestro equipo está formado por educadores apasionados y entusiastas de la IA, comprometidos con mejorar la experiencia de aprendizaje. Actualizamos constantemente nuestros cursos para reflejar los avances más recientes en tecnología y educación, asegurándonos de que nuestros usuarios reciban los mejores recursos posibles.
     </p>
     <p className="mb-4 text-lg">
-      Join us on this exciting journey and unlock the potential of AI in your education!
+      ¡Únete a nosotros en este emocionante viaje y desbloquea el potencial de la IA en tu educación!
     </p>
   </div>
   <Footer/>

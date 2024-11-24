@@ -5,7 +5,7 @@ import EditChapter from "./EditChapter";
 const ChapterList = ({ course, refreshData, edit = true }) => {
   return (
     <div className="mt-3 ">
-      <h2 className="font-medium text-xl "> Chapter's</h2>
+      <h2 className="font-medium text-xl "> Capitulos</h2>
       <div className="mt-2">
         {course?.courseOutput?.course?.chapters.map((chapter, index) => (
           <div className="p-5 border rounded-lg mt-2 flex items-center justify-between cursor-pointer">

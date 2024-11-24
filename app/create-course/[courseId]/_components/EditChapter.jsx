@@ -48,14 +48,14 @@ const EditChapter = ({course, index, refreshData}) => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Course Chapter's</DialogTitle>
+            <DialogTitle>Editar capítulos del curso</DialogTitle>
             <DialogDescription>
              <div className="mt-3">
-              <label htmlFor="">Course Title</label>
+              <label htmlFor="">Título del curso</label>
               <Input defaultValue={chapters[index].name} onChange={(e)=>setName(e?.target.value)} />
              </div>
              <div  className='mt-3'>
-              <label  htmlFor="">Course Description</label>
+              <label  htmlFor="">Descripción del curso</label>
               <Textarea className="h-40" defaultValue={chapters[index].about} onChange ={(e)=>setAbout(e?.target.value)} />
              </div>
             </DialogDescription>
@@ -63,7 +63,7 @@ const EditChapter = ({course, index, refreshData}) => {
           <DialogFooter>
             <DialogClose>
               <Button onClick={onUpdateHandler}>
-                Update
+                Actualizar
               </Button>
             </DialogClose>
           </DialogFooter>

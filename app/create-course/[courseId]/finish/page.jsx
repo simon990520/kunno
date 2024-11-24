@@ -36,13 +36,13 @@ const FinishScreen = ({ params }) => {
   return (
     <div className="px-10 md:px-20 lg:px-44 my-7">
       <h2 className="text-center font-bold text-2xl my-3 text-primary">
-        Congrats! your course is now Ready..
+      ¡Felicidades! 🎉 Tu curso ya está listo. 📚🎓
       </h2>
       <CourseBasicInfo course={course} refreshData={() => console.log()} />
       <Link href={'/course/'+course?.courseId+'/start'}>
           <Button className="w-full mt-5 cursor-pointer">Start</Button>
           </Link>
-      <h3 className="mt-3  mb-2">Course Url:</h3>
+      <h3 className="mt-3  mb-2">URL del curso:</h3>
       <h2 className="flex items-center justify-between text-center text-gray-400 border p-2 rounded-md">
         {process.env.NEXT_PUBLIC_HOST_NAME}/course/view/{course?.courseId}
         <HiOutlineClipboardDocumentCheck

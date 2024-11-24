@@ -62,7 +62,7 @@ const CourseCard = ({ course, refreshData, displayUser = false }) => {
         <div className="flex items-center justify-between">
           <h2 className="flex gap-2 items-center p-1 bg-purple-50 text-primary text-sm rounded-sm">
             <HiOutlineBookOpen /> {course?.courseOutput?.course?.noOfChapters}
-            -Chapters
+            -Capitulos
           </h2>
           <h2 className="text-sm bg-purple-50 text-primary p-1 rounded-sm ">
             {course?.level}

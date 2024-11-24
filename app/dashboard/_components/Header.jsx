@@ -33,19 +33,19 @@ const Header = () => {
   const menu = [
     {
       id: 1,
-      name: "home",
+      name: "Inicio",
       icon: <HiOutlineHome />,
       path: "/dashboard",
     },
     {
       id: 2,
-      name: "Explore",
+      name: "Explorar",
       icon: <HiOutlineSquare3Stack3D />,
       path: "/dashboard/explore",
     },
     {
       id: 3,
-      name: "Upgrade",
+      name: "PRO",
       icon: <HiOutlineShieldCheck />,
       path: "/dashboard/upgrade",
     },
@@ -62,7 +62,7 @@ const Header = () => {
 
     {
       id: 4,
-      name: "Logout",
+      name: "Salir",
       icon: <CiPower />,
       path: "/dashboard/logout",
       isLogout: true,
@@ -73,7 +73,7 @@ const Header = () => {
       <div className="flex items-center gap-2">
            <Link className="flex items-center gap-2 cursor-pointer" href={'/'}>
         <Image src={"/logo.png"} width={44} height={44} />{" "}
-        <span className="font-bold text-xl">AI Course Generator</span>
+        <span className="font-bold text-xl">Generador de Cursos con IA</span>
            </Link>
 
       </div>

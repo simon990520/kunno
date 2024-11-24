@@ -23,7 +23,7 @@ const SelectOption = () => {
         <div>
           <label htmlFor="" className="text-xm">
             {" "}
-            🎓Difficulty level
+            🎓  Nivel de dificultad
           </label>
           <Select
             onValueChange={(value) =>
@@ -35,15 +35,15 @@ const SelectOption = () => {
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Beginner"> Beginner</SelectItem>
-              <SelectItem value="Intermediate">Intermediate</SelectItem>
-              <SelectItem value="Advance">Advance</SelectItem>
+            <SelectItem value="Beginner">Principiante</SelectItem>
+            <SelectItem value="Intermediate">Intermedio</SelectItem>
+            <SelectItem value="Advance">Avanzado</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
           <label htmlFor="" className="text-xm">
-            🕛 Course Duration
+            🕛 Duración del curso
           </label>
           <Select
             onValueChange={(value) => handleInputChange("duration", value)}
@@ -53,17 +53,15 @@ const SelectOption = () => {
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1 Hourse">1 Hourse</SelectItem>
-              <SelectItem value="2 Hourse">2 Hourse</SelectItem>
-              <SelectItem value="More than 3 Hourse">
-                More Than 3 Hours
-              </SelectItem>
+              <SelectItem value="1 Hour">1 Hora</SelectItem>
+              <SelectItem value="2 Hours">2 Horas</SelectItem>
+              <SelectItem value="More than 3 Hours">Más de 3 Horas</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
           <label htmlFor="" className="text-xm">
-            ▶️Add Video
+            ▶️  Agregar video
           </label>
           <Select
             onValueChange={(value) => handleInputChange("displayVideo", value)}
@@ -73,13 +71,13 @@ const SelectOption = () => {
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Yes">Yes</SelectItem>
+              <SelectItem value="Yes">Si</SelectItem>
               <SelectItem value="No">No</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
-          <label htmlFor="">No of Chapters</label>
+          <label htmlFor="">Número de capítulos</label>
           <Input
             onChange={(e) => handleInputChange("noOfChapter", e.target.value)}
             defaultValue={userCourseInput?.noOfChapter}

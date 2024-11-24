@@ -7,25 +7,18 @@ import { HiChevronDoubleRight } from "react-icons/hi";
 const Hero = () => {
   return (
     <div>
-      <section className="h-screen">
+      <section className="bg-cover bg-center bg-no-repeat bg-[url('/banner.png')]">
         <div className="mx-auto max-w-screen-xl px-4 pt-32 pb-10 lg:flex lg:items-center">
           <div className="mx-auto max-w-xl text-center">
-            <h1 className="text-3xl font-extrabold sm:text-5xl text-primary">
-              <span className="text-black"> AI Course </span>Generator.
-              <strong className=" mt-12 font-medium text-3xl text-black sm:block">
-                {" "}
-                Custom Learning paths, Powered By AI.{" "}
-              </strong>
-            </h1>
-
-            <p className="mt-4 text-xm relaxed">
-              Unlock personalized education with AI-driven course creation.
-              Tailor your learning journey to fit your unique goals and pace.
-            </p>
-
-            <div className="mt-40 flex flex-wrap justify-center gap-4 cursor-pointer">
+          <h1 class="text-3xl font-extrabold sm:text-5xl">
+          Crea <strong class="font-extrabold text-orange-500 "> tus propios </strong>cursos personalizados con <strong class="font-extrabold text-orange-500 "> IA. </strong>
+          </h1>
+          <p className="mt-4 text-xm relaxed bg-white bg-opacity-30">
+            Descubre la educación personalizada con cursos creados por IA. Adapta tu aprendizaje a tus objetivos y ritmo únicos.
+          </p>
+            <div className="mt-10 flex flex-wrap justify-center gap-4 cursor-pointer">
               <Link href={"/explore-course"}>
-                <Button variant="startButton" size="lg">Explore Now.<HiChevronDoubleRight className="text-xl" /></Button>
+                <Button variant="startButton" size="lg">explorar cursos.<HiChevronDoubleRight className="text-xl" /></Button>
               </Link>
             </div>
           </div>

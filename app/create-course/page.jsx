@@ -22,17 +22,17 @@ const CreateCourse = () => {
   const StepperOptions = [
     {
       id: 1,
-      name: "Category",
+      name: "Categoría",
       icon: <HiMiniSquares2X2 />,
     },
     {
       id: 2,
-      name: "Topics & Desc",
+      name: "Temas",
       icon: <HiLightBulb />,
     },
     {
       id: 3,
-      name: "Options",
+      name: "Opciones",
       icon: <HiClipboardDocumentCheck />,
     },
   ];
@@ -81,8 +81,8 @@ const CreateCourse = () => {
   const GenerateCourseLayout = async () => {
     if(!isAdmin){
       const numberOfChapter = userCourseInput?.noOfChapter; 
-      if(numberOfChapter>10){
-        alert("You cannot select more than 10 chapters.");
+      if(numberOfChapter>25){
+        alert("No puedes seleccionar más de 25 capítulos.");
         return;
       }
     }
@@ -104,7 +104,7 @@ const CreateCourse = () => {
     const FINAL_PROMPT =
       BASIC_PROMPT +
       USER_INPUT_PROMPT +
-      '. The JSON should include "course" with "name", "description", and an array of "chapters" objects.';
+      '. The JSON should include "course" with "name", "description", and an array of "chapters" objects. Respond in the language of the topic.';
 
     console.log(FINAL_PROMPT);
 
@@ -143,14 +143,14 @@ const CreateCourse = () => {
     <div>
       {/* steper */}
       <div className="flex flex-col justify-center items-center mt-10">
-        <h2 className="text-4xl text-primary font-medium">Create Course</h2>
+        <h2 className="text-4xl text-primary font-medium">Crear curso</h2>
         <div className="flex  mt-10">
           {StepperOptions.map((item, index) => (
             <div className="flex items-center">
               <div className="flex flex-col items-center w-[50px] md:w-[100px]">
                 <div
                   className={`bg-gray-300 p-3 rounded-full text-white ${
-                    activeIndex >= index && "bg-purple-500"
+                    activeIndex >= index && "bg-orange-500"
                   }`}
                 >
                   {item.icon}
@@ -201,7 +201,7 @@ const CreateCourse = () => {
               disabled={checkStaus()}
               onClick={() => GenerateCourseLayout()}
             >
-              Gerate Course Layout
+              Generar curso
             </Button>
           )}
         </div>
