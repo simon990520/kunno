@@ -52,5 +52,11 @@ export default [
         name: 'Arte',
         icon: 'art.png',
         prompt: ''
+    },
+    {
+        id: 10,
+        name: 'Cultura',
+        icon: 'art.png',
+        prompt: ''
     }
 ];

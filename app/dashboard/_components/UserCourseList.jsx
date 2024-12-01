@@ -6,6 +6,8 @@ import { eq } from 'drizzle-orm'
 import React, { useContext, useEffect, useState } from 'react'
 import CourseCard from './CourseCard'
 import { UserCourseListContext } from '@/app/_context/UserCourseListContext'
+import { ref, get, set, update, push } from "firebase/database"; // Importa las funciones necesarias
+import { realtimeDb } from "@/configs/firebaseConfig";
 
 const UserCourseList = () => {
   const [courseList,setCourseList] =  useState([]);
@@ -24,14 +26,46 @@ const UserCourseList = () => {
     // Cleanup the timer on component unmount
     return () => clearTimeout(timer);
   },[user, pageIndex])
-  const getUserCourses = async()=>{
-    const result = await db.select().from(CourseList).where(eq(CourseList?.createdBy,user?.primaryEmailAddress?.emailAddress)).limit(7).offset(pageIndex*6);
-
-    // console.log(result);
-    setCourseList(result.slice(0,6))
-    setUserCourseList(result)
-    
-  }
+  const getUserCourses = async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) {
+      console.error("Falta la dirección de correo electrónico del usuario.");
+      return;
+    }
+  
+    try {
+      // Referencia a los cursos en Firebase
+      const coursesRef = ref(realtimeDb, `courses`);
+      
+      // Obtener todos los cursos
+      const snapshot = await get(coursesRef);
+  
+      if (snapshot.exists()) {
+        const allCourses = snapshot.val();
+  
+        // Filtrar los cursos creados por el usuario
+        const userCourses = Object.values(allCourses).filter(
+          (course) => course.createdBy === user.primaryEmailAddress.emailAddress
+        );
+  
+        // Implementar la paginación
+        const startIndex = pageIndex * 6;
+        const paginatedCourses = userCourses.slice(startIndex, startIndex + 6);
+  
+        // Actualizar los estados
+        setCourseList(paginatedCourses); // Cursos para mostrar
+        setUserCourseList(userCourses); // Todos los cursos del usuario
+  
+        console.log("Cursos del usuario:", userCourses);
+      } else {
+        console.error("No se encontraron cursos en la base de datos.");
+        setCourseList([]); // Vaciar la lista si no hay resultados
+        setUserCourseList([]);
+      }
+    } catch (error) {
+      console.error("Error al obtener los cursos del usuario desde Firebase:", error);
+    }
+  };
+  
   return (
     <div className='mt-5'>
       <h2 className='font-medium text-xl'>Mis cursos</h2>

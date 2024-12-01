@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/configs/db";
 import { CourseList } from "@/configs/Schema";
 import { eq } from "drizzle-orm";
+import { realtimeDb } from "@/configs/firebaseConfig";
+import { ref, update } from "firebase/database";
 
 const EditCourseBasicInfo = ({course, refreshData}) => {
   const [name, setName] =  useState();
@@ -26,20 +28,30 @@ const EditCourseBasicInfo = ({course, refreshData}) => {
          setDescription(course?.courseOutput?.course?.description);
   },[course])
 
-  const onUpdateHandler = async()=>{
-    course.courseOutput.course.name=name;
-    course.courseOutput.course.description=description;
-    // console.log(course);
-    const result =  await db.update(CourseList).set({
-      courseOutput:course?.courseOutput
-    }).where(eq(CourseList?.id,course?.id))
-    .returning({id:CourseList.id});
-
-    // console.log(result);
-    refreshData(true)
-    
-    
-  }
+  const onUpdateHandler = async () => {
+    if (!course || !course.courseId) {
+      console.error("Datos del curso inválidos. No se puede actualizar.");
+      return;
+    }
+  
+    try {
+      // Referencia al curso en Firebase
+      const courseRef = ref(realtimeDb, `courses/${course.courseId}/courseOutput/course`);
+  
+      // Actualiza los datos en Firebase
+      await update(courseRef, {
+        name: name,
+        description: description,
+      });
+  
+      console.log("Curso actualizado exitosamente en Firebase");
+      refreshData(true); // Refresca los datos si es necesario
+    } catch (error) {
+      console.error("Error al actualizar el curso en Firebase:", error);
+    }
+  };
+  
+  
   return (
       <Dialog>
         <DialogTrigger>

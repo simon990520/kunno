@@ -12,6 +12,8 @@ import { Corben } from "next/font/google";
 import React, { useEffect, useState } from "react";
 import { HiOutlineShare } from "react-icons/hi";
 import { HiOutlineClipboardDocumentCheck } from "react-icons/hi2";
+import { ref, get, set, update, push } from "firebase/database"; // Importa las funciones necesarias
+import { realtimeDb } from "@/configs/firebaseConfig";
 
 const Course = ({ params }) => {
   const [course, setCourse] = useState([]);
@@ -20,14 +22,30 @@ const Course = ({ params }) => {
     params && GetCourse();
   }, [params]);
   const GetCourse = async () => {
-    const result = await db
-      .select()
-      .from(CourseList)
-      .where(eq(CourseList?.courseId, params?.courseId));
-
-    //   console.log(result);
-    setCourse(result[0]);
+    if (!params?.courseId) {
+      console.error("Falta el ID del curso.");
+      return;
+    }
+  
+    try {
+      // Referencia al curso en Firebase
+      const courseRef = ref(realtimeDb, `courses/${params.courseId}`);
+  
+      // Obtener datos del curso
+      const snapshot = await get(courseRef);
+  
+      if (snapshot.exists()) {
+        const courseData = snapshot.val();
+        console.log(courseData);
+        setCourse(courseData);
+      } else {
+        console.error("No se encontró el curso en la base de datos.");
+      }
+    } catch (error) {
+      console.error("Error al obtener el curso desde Firebase:", error);
+    }
   };
+  
 
   return (
     <div>
@@ -37,12 +55,12 @@ const Course = ({ params }) => {
         <h3 className="mt-3  mb-2">Course Url:</h3>
         <div>
           <h2 className="flex items-center justify-between text-center text-gray-400 border p-2 rounded-md">
-            {process.env.NEXT_PUBLIC_HOST_NAME}/course/{course?.courseId}
+            {process.env.NEXT_PUBLIC_HOST_NAME}course/{course?.courseId}
             <HiOutlineClipboardDocumentCheck
               onClick={async () =>
                 await navigator.clipboard.writeText(
                   process.env.NEXT_PUBLIC_HOST_NAME +
-                    "/course/" +
+                    "course/" +
                     course?.courseId
                 )
               }
@@ -54,10 +72,10 @@ const Course = ({ params }) => {
                 onClick={() => {
                   navigator
                     .share({
-                      title: "Check out this course!",
+                      title: "¡Mira este curso!",
                       url:
                         process.env.NEXT_PUBLIC_HOST_NAME +
-                        "/course/" +
+                        "course/" +
                         course?.courseId,
                     })
                     .then(() => console.log("Successfully shared"))

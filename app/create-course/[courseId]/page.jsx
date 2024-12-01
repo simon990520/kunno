@@ -1,8 +1,6 @@
 "use client";
-import { db } from "@/configs/db";
-import { Chapters, CourseList } from "@/configs/Schema";
+import { ref, get, set, update, push } from "firebase/database"; // Importa las funciones necesarias
 import { useUser } from "@clerk/nextjs";
-import { and, eq } from "drizzle-orm";
 import React, { useEffect, useState } from "react";
 import CourseBasicInfo from "./_components/CourseBasicInfo";
 import CourseDetail from "./_components/CourseDetail";
@@ -10,101 +8,106 @@ import ChapterList from "./_components/ChapterList";
 import toast, { Toaster } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { GenerateChapterContent_AI } from "@/configs/AiModel";
-import { Fascinate } from "next/font/google";
-import Loading from "../_components/Loading";
 import service from "@/configs/service";
+import Loading from "../_components/Loading";
 import { useRouter } from "next/navigation";
+import { realtimeDb } from "@/configs/firebaseConfig";
 
 const courseLayout = ({ params }) => {
   const { user } = useUser();
-  const [course, setCourse] = useState([]);
+  const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isCourseValid, setIsCourseValid] = useState(false);
-  const router =  useRouter();
+  const router = useRouter();
 
   useEffect(() => {
     if (params?.courseId) {
-      GetCourse();
+      getCourseData();
     } else {
       setIsCourseValid(false);
     }
-    
   }, [params, user]);
-  const GetCourse = async () => {
-    if (!params?.courseId || !user?.primaryEmailAddress?.emailAddress) {
-      console.error("Course ID or User email is missing");
-      setIsCourseValid(false);
-      return;
-    }
-    try {
-      
-      const result = await db
-        .select()
-        .from(CourseList)
-        .where(
-          and(
-            eq(CourseList.courseId, params?.courseId),
-            eq(CourseList?.createdBy, user?.primaryEmailAddress?.emailAddress)
-          )
-        );
-        if (result.length > 0) {
-          setCourse(result[0]);
-          setIsCourseValid(true);
-        } else {
-          setIsCourseValid(false);
-        }
-  
-    } catch (error) {
-      setIsCourseValid(false);
-    } 
-    // console.log(result);
-    // setCourse(result[0]);
-  };
-  const GenerateChapterContent = async () => {
-    if (!course?.courseId || !course?.courseOutput?.course?.chapters) {
-      // toast.error("Course or chapters are missing. Cannot generate content.");
-      return;
-    }
-    setLoading(true);
-    const chapters = course?.courseOutput?.course?.chapters;
-    chapters.forEach(async (chapter, index) => {
-      const PROMPT =
-        "Explain the concept in Detail on Topic: " +
-        course?.name +
-        ", Chapter:" +
-        chapter?.name +
-        ", in JSON Format with list of array with field as title, description in detail, Code Example(Code filed in <precode> formt) if applicable";
-      // console.log(PROMPT);
-      // if (index <2) {
-        try {
-          let videoId = "";
-          // Generate Video URL
-          service.getVideos(course?.name+":"+chapter?.name).then((resp) => {
-            console.log(resp);
-            videoId = resp[0]?.id?.videoId
-          });
-          const result = await GenerateChapterContent_AI.sendMessage(PROMPT);
-          // console.log(result?.response?.text());
-          const content = JSON.parse(result?.response?.text());
 
-          // save the chapter content + video URL
-          await db.insert(Chapters).values({
-            chapterId: index,
-            courseId: course?.courseId,
-            content: content,
-            videoId: videoId,
-          });
-          setLoading(false);
-        } catch (error) {
-          setLoading(false);
-          console.log(error);
+  // Función para obtener datos del curso desde Firebase
+  const getCourseData = async () => {
+    if (!params?.courseId || !user?.primaryEmailAddress?.emailAddress) {
+      console.error("Falta el ID del curso o el correo electrónico del usuario.");
+      setIsCourseValid(false);
+      return;
+    }
+    if (!realtimeDb) {
+      console.error("Firebase Realtime Database no está inicializado correctamente.");
+      return;
+    }
+    
+
+    try {
+      const courseRef = ref(realtimeDb, `courses/${params.courseId}`);
+      const snapshot = await get(courseRef);
+
+      if (snapshot.exists()) {
+        const courseData = snapshot.val();
+        setCourse(courseData);
+        setIsCourseValid(true);
+      } else {
+        console.error("No se encontró el curso en la base de datos.");
+        setIsCourseValid(false);
+      }
+    } catch (error) {
+      console.error("Error obteniendo datos del curso:", error);
+      setIsCourseValid(false);
+    }
+  };
+
+  // Función para generar contenido de capítulos y guardarlo en Firebase
+  const generateChapterContent = async () => {
+    if (!course?.courseId || !course?.courseOutput?.course?.chapters) {
+      toast.error("Faltan datos del curso o capítulos. No se puede generar contenido.");
+      return;
+    }
+
+    setLoading(true);
+
+    const chapters = course?.courseOutput?.course?.chapters;
+
+    for (const [index, chapter] of chapters.entries()) {
+      const prompt = `
+        Explica el concepto en detalle sobre el tema: ${course?.name}, 
+        Capítulo: ${chapter?.name}, 
+        En formato JSON con una lista de arreglos con los campos como título, descripción en detalle, ejemplo de código (campo de código en formato <precode> si corresponde).
+      `;
+
+      try {
+        let videoId = "";
+        // Genera el video URL
+        const videoResponse = await service.getVideos(`${course?.name}:${chapter?.name}`);
+        if (videoResponse?.length > 0) {
+          videoId = videoResponse[0]?.id?.videoId || "";
         }
-        await db.update(CourseList).set({
-          publish:true
-        })
-        router.replace('/create-course/'+course?.courseId+'/finish')
-      // }
-    });
+
+        // Genera el contenido del capítulo
+        const result = await GenerateChapterContent_AI.sendMessage(prompt);
+        const content = JSON.parse(result?.response?.text());
+
+        // Guarda el contenido del capítulo en Firebase
+        const chapterRef = ref(realtimeDb, `courses/${course.courseId}/chapters/${index}`);
+        await set(chapterRef, {
+          chapterId: index,
+          name: chapter?.name,
+          content: content,
+          videoId: videoId,
+        });
+      } catch (error) {
+        console.error("Error generando contenido del capítulo:", error);
+      }
+    }
+
+    // Actualiza el estado del curso como "publicado"
+    const courseRef = ref(realtimeDb, `courses/${course.courseId}`);
+    await update(courseRef, { publish: true });
+
+    setLoading(false);
+    router.replace(`/create-course/${course?.courseId}/finish`);
   };
 
   return (
@@ -113,16 +116,16 @@ const courseLayout = ({ params }) => {
 
       <Loading loading={loading} />
 
-      {/* basic info  */}
-      <CourseBasicInfo course={course} refreshData={() => GetCourse()} />
+      {/* Información básica del curso */}
+      <CourseBasicInfo course={course} refreshData={getCourseData} />
 
-      {/* course details  */}
+      {/* Detalles del curso */}
       <CourseDetail course={course} />
 
-      {/* list pf lession  */}
-      <ChapterList course={course} refreshData={() => GetCourse()} />
+      {/* Lista de capítulos */}
+      <ChapterList course={course} refreshData={getCourseData} />
 
-      <Button disabled={!isCourseValid} onClick={GenerateChapterContent} className="my-10">
+      <Button disabled={!isCourseValid} onClick={generateChapterContent} className="my-10">
         Generar contenido del curso
       </Button>
       <Toaster />

@@ -32,7 +32,7 @@ const DropdownOption = ({ children,handleOnDelete }) => {
       <DropdownMenuContent>
         <DropdownMenuItem onClick={()=>setOpenAlert(true)}>
           <div className="flex  items-center gap-1">
-            <HiOutlineTrash /> Delete
+            <HiOutlineTrash /> Eliminar
           </div>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -43,15 +43,15 @@ const DropdownOption = ({ children,handleOnDelete }) => {
  
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogTitle>¿Estás completamente seguro?</AlertDialogTitle>
       <AlertDialogDescription>
-        This action cannot be undone. This will permanently delete your course
-        and remove your data from our servers.
+      Esta acción no se puede deshacer. Eliminará permanentemente su curso
+      y eliminará sus datos de nuestros servidores.
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
-      <AlertDialogCancel onClick={()=>setOpenAlert(false)}>Cancel</AlertDialogCancel>
-      <AlertDialogAction onClick={()=>{handleOnDelete();setOpenAlert(false)}}>Continue</AlertDialogAction>
+      <AlertDialogCancel onClick={()=>setOpenAlert(false)}>Cancelar</AlertDialogCancel>
+      <AlertDialogAction onClick={()=>{handleOnDelete();setOpenAlert(false)}}>Continuar</AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
 </AlertDialog>

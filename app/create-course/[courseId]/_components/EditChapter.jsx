@@ -15,6 +15,8 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { db } from "@/configs/db";
 import { CourseList } from "@/configs/Schema";
+import { realtimeDb } from "@/configs/firebaseConfig";
+import { ref, get, set, update, push } from "firebase/database";
 import { eq } from "drizzle-orm";
 const EditChapter = ({course, index, refreshData}) => {
 
@@ -26,21 +28,29 @@ const EditChapter = ({course, index, refreshData}) => {
            setName(chapters[index].name);
            setAbout(chapters[index].about);
     },[course])
-    const onUpdateHandler = async ()=>{
-
-        course.courseOutput.course.chapters[index].name = name;
-        course.courseOutput.course.chapters[index].about = about;
-
-        // console.log(course);
-        const result =  await db.update(CourseList).set({
-            courseOutput:course?.courseOutput
-          }).where(eq(CourseList?.id,course?.id))
-          .returning({id:CourseList.id});
-      
-        //   console.log(result);
-        refreshData(true);
-        
-    }
+    const onUpdateHandler = async () => {
+      if (!course || !course.courseId || !course.courseOutput?.course?.chapters?.[index]) {
+        console.error("Datos del curso o capítulo inválidos. No se puede actualizar.");
+        return;
+      }
+    
+      try {
+        // Referencia específica al capítulo en Firebase
+        const chapterRef = ref(realtimeDb, `courses/${course.courseId}/courseOutput/course/chapters/${index}`);
+    
+        // Actualiza los datos del capítulo
+        await update(chapterRef, {
+          name: name,
+          about: about,
+        });
+    
+        console.log("Capítulo actualizado exitosamente en Firebase");
+        refreshData(true); // Refresca los datos si es necesario
+      } catch (error) {
+        console.error("Error al actualizar el capítulo en Firebase:", error);
+      }
+    };
+    
   return (
     <Dialog>
         <DialogTrigger>

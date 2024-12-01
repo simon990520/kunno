@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import { HiOutlinePuzzlePiece } from "react-icons/hi2";
 import EditCourseBasicInfo from "./EditCourseBasicInfo";
 import { Corben } from "next/font/google";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref as refFile, uploadBytes } from "firebase/storage";
 import { date } from "drizzle-orm/mysql-core";
-import { storage } from "@/configs/firebaseConfig";
+import { getDatabase, ref, update } from "firebase/database"; // Firebase imports
+import { storage, realtimeDb } from "@/configs/firebaseConfig";
 import { db } from "@/configs/db";
 import { CourseList } from "@/configs/Schema";
 import { eq } from "drizzle-orm";
@@ -23,34 +24,44 @@ const CourseBasicInfo = ({ course, refreshData,edit=true }) => {
   const onFileSelected = async (event) => {
     const file = event.target.files[0];
     if (!file) {
-      // alert("No file selected.");
+      toast.error("No file selected.");
       return;
     }
-    // console.log(file);
+  
     const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
-      // alert("Please upload an image file (jpg, jpeg, png).");
-      toast.error('Please upload an image file (jpg, jpeg, png).');
+      toast.error("Please upload an image file (jpg, jpeg, png).");
       return;
     }
+  
+    // Muestra una vista previa local del archivo seleccionado
     setSelectedFile(URL.createObjectURL(file));
-    const fileName = Date.now() + ".jpg";
-    const storageRef = ref(storage, "ai-course/" + fileName);
-
-    await uploadBytes(storageRef, file)
-      .then((snapshot) => {
-        // console.log("file uploaded sucess");
-      })
-      .then((resp) => {
-        getDownloadURL(storageRef).then(async (downloadUrl) => {
-          console.log(downloadUrl);
-          await db.update(CourseList).set({
-            courseBanner:downloadUrl
-          }).where(eq(CourseList.id,course.id))
-
-        });
+  
+    // Genera un nombre único para el archivo
+    const fileName = `${Date.now()}.jpg`;
+    const storageRef = refFile(storage, `ai-course/${fileName}`);
+  
+    try {
+      // Subir el archivo a Firebase Storage
+      await uploadBytes(storageRef, file);
+      console.log("File uploaded successfully.");
+  
+      // Obtener la URL pública del archivo
+      const downloadUrl = await getDownloadURL(storageRef);
+      console.log("Download URL:", downloadUrl);
+  
+      // Actualizar la URL en Firebase Realtime Database
+      const courseRef = ref(realtimeDb, `courses/${course.courseId}`);
+      await update(courseRef, {
+        courseBanner: downloadUrl,
       });
+      console.log("Database updated successfully with new banner URL.");
+    } catch (error) {
+      console.error("Error uploading file or updating the database:", error);
+      toast.error("An error occurred while updating the course banner.");
+    }
   };
+  
 
   return (
     <div className="p-10 border rounded-xl shadow-sm mt-5">

@@ -6,13 +6,7 @@ import Link from 'next/link';
 import React, { useContext } from 'react'
 
 const Addcourse = () => {
-    const {user} =  useUser();
-    const{userCourseList, setUserCourseList} = useContext(UserCourseListContext)
-    
-    console.log(userCourseList?.length);
-  const isAdmin = user?.primaryEmailAddress?.emailAddress == 'mr.pankajpandey0038@gmail.com';
-  const hasCourseLimit = userCourseList?.length >= 2;
-  const destination = isAdmin || !hasCourseLimit ? '/create-course' : '/dashboard/upgrade';
+  const {user} =  useUser();
     
   return (
     <div  className='flex justify-between items-center'>
@@ -21,7 +15,7 @@ const Addcourse = () => {
             <p className='text-sm text-gray-500'>Crea nuevos cursos con IA, compártelos con amigos, pefecto para automatas.</p>
         </div>
 
-        <Link href={destination}>
+        <Link href="/create-course">
         <Button variant="startButton">+ crear curso con IA</Button>
         </Link>
         

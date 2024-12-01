@@ -17,6 +17,8 @@ import uuid4 from "uuid4";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { adminConfig } from "@/configs/AdminConfig";
+import { ref, set } from "firebase/database";
+import { realtimeDb } from "@/configs/firebaseConfig";
 
 const CreateCourse = () => {
   const StepperOptions = [
@@ -89,22 +91,22 @@ const CreateCourse = () => {
 
     setLoading(true);
     const BASIC_PROMPT =
-      'Generate a Course Tutorial with the following details: Course Name, Description, Chapter Name, About, Duration, and structure it in JSON format as an object with a "course" field containing these attributes: ';
+      'Genera un tutorial de curso con los siguientes detalles: Nombre del curso, Descripción, Nombre del capítulo, Acerca de, Duración, y estructúralo en formato JSON como un objeto con un campo "course" que contenga estos atributos: ';
     const USER_INPUT_PROMPT =
-      "Category: " +
+      "Categoría: " +
       userCourseInput?.category +
-      ", Topic: " +
+      ", Tema: " +
       userCourseInput?.topic +
-      ", Level: " +
+      ", Nivel: " +
       userCourseInput?.level +
-      ", Duration: " +
+      ", Duracion: " +
       userCourseInput?.duration +
       ", NoOfChapters: " +
       userCourseInput?.noOfChapter;
     const FINAL_PROMPT =
       BASIC_PROMPT +
       USER_INPUT_PROMPT +
-      '. The JSON should include "course" with "name", "description", and an array of "chapters" objects. Respond in the language of the topic.';
+      'El JSON debe incluir "course" con "name", "description" y un arreglo de objetos "chapters". Responde en el idioma del tema.';
 
     console.log(FINAL_PROMPT);
 
@@ -120,25 +122,48 @@ const CreateCourse = () => {
   };
 
   const saveCourseLayoutDb = async (courseLayout) => {
-    var id = uuid4(); // course Id
+    const id = uuid4(); // Genera un ID único para el curso.
     setLoading(true);
-
-    const result = await db.insert(CourseList).values({
-      courseId: id,
-      name: userCourseInput?.topic,
-      level: userCourseInput?.level,
-      category: userCourseInput?.category,
-      courseOutput: courseLayout,
-      createdBy: user?.primaryEmailAddress?.emailAddress,
-      userName: user?.fullName,
-      userProfileImage: user?.imageUrl,
-    });
-
-    console.log("Finshed");
-
-    setLoading(false);
-    router.replace("/create-course/" + id);
+  
+    try {
+      // Referencia al nodo en Realtime Database
+      const courseRef = ref(realtimeDb, `courses/${id}`);
+  
+      // Verifica y limpia los datos antes de guardarlos
+      const dataToSave = {
+        courseId: id,
+        name: userCourseInput?.topic || "Sin nombre",
+        level: userCourseInput?.level || "Principiante",
+        category: userCourseInput?.category || "General",
+        courseOutput: courseLayout || {},
+        createdBy: user?.primaryEmailAddress?.emailAddress || "Usuario desconocido",
+        userName: user?.fullName || "Anonimo",
+        userProfileImage: user?.imageUrl || "",
+      };
+  
+      // Guardar los datos del curso
+      try {
+      
+        await set(courseRef, dataToSave);
+      
+        console.log("Datos guardados exitosamente en Firebase.");
+      } catch (error) {
+        console.error("Error en set(courseRef, dataToSave):", error.message);
+        console.error("Detalles del error:", error);
+      }
+      
+  
+      console.log("Curso guardado correctamente en Firebase Realtime Database");
+      setLoading(false);
+  
+      // Redirigir al usuario a la página del curso generado
+      router.replace(`/create-course/${id}`);
+    } catch (error) {
+      console.error("Error al guardar el curso en Firebase Realtime Database:", error);
+      setLoading(false);
+    }
   };
+  
   return (
     <div>
       {/* steper */}

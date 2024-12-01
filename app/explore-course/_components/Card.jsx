@@ -7,23 +7,30 @@ import { CourseList } from "@/configs/Schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { HiOutlineShare } from "react-icons/hi";
+import { realtimeDb } from "@/configs/firebaseConfig";
+import { getDatabase, ref, remove } from "firebase/database"; // Firebase imports
 
-const Card = ({ course, refreshData, }) => {
+const Card = ({ course, refreshData }) => {
   const handleOnDelete = async () => {
-    const resp = await db
-      .delete(CourseList)
-      .where(eq(CourseList.id, course?.id))
-      .returning({ id: CourseList?.id });
+    try {
+      const courseRef = ref(realtimeDb, `courses/${course?.courseId}`); // Referencia al curso en Firebase
 
-    if (resp) {
+      await remove(courseRef); // Elimina el curso
+
+      // Refresca los datos después de la eliminación
       refreshData();
+      console.log(`Curso con ID ${course?.courseId} eliminado exitosamente.`);
+    } catch (error) {
+      console.error("Error al eliminar el curso:", error);
     }
   };
+  // Imagen por defecto si no hay imagen del curso
+  const defaultImage = "/course-cover.svg"; // Aquí colocas la ruta de la imagen por defecto
   return (
     <div className="shadow-sm rounded-md border  cursor-pointer hover:border-primary">
       <Link href={"/course/" + course?.courseId}>
         <Image
-          src={course?.courseBanner}
+          src={course?.courseBanner || defaultImage}  
           width={300}
           height={200}
           className="w-full h-[200px] rounded-md object-cover"
@@ -58,7 +65,7 @@ const Card = ({ course, refreshData, }) => {
         <div className="flex items-center justify-between">
           <h2 className="flex gap-2 items-center p-1 bg-purple-50 text-primary text-sm rounded-sm">
             <HiOutlineBookOpen /> {course?.courseOutput?.course?.noOfChapters}
-            -Chapters
+            -Capitulos
           </h2>
           <h2 className="text-sm bg-purple-50 text-primary p-1 rounded-sm ">
             {course?.level}

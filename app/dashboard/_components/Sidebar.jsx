@@ -112,10 +112,8 @@ const Sidebar = () => {
             )
           ))}
       </ul>
-      <div className="absolute bottom-10 w-[80%]">
+      {/* <div className="absolute bottom-10 w-[80%]">
         <h2 className="text-sm my-2 ">
-          {/* {userCourseList?.length} out of 3 course created.
-           */}
           {isAdmin ? (
             <Progress value={(courseCount / 100) * 100} />
           ) : (
@@ -130,7 +128,7 @@ const Sidebar = () => {
             Actualiza tu plan para generar cursos ilimitados.
           </h2>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
