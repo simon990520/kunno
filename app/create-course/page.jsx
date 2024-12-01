@@ -135,6 +135,7 @@ const CreateCourse = () => {
         name: userCourseInput?.topic || "Sin nombre",
         level: userCourseInput?.level || "Principiante",
         category: userCourseInput?.category || "General",
+        includeVideo: userCourseInput?.displayVideo || "No", 
         courseOutput: courseLayout || {},
         createdBy: user?.primaryEmailAddress?.emailAddress || "Usuario desconocido",
         userName: user?.fullName || "Anonimo",

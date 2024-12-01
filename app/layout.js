@@ -52,11 +52,8 @@ export default function RootLayout({ children }) {
           <meta name="twitter:image" content={metadata.twitter.image} />
 
           {/* Script de Google AdSense */}
-          <script
-            data-ad-client={process.env.NEXT_PUBLIC_AD_CLIENT_ID} // Reemplaza con tu ID de cliente de AdSense
-            async
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-          ></script>
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5778874524368857"
+     crossorigin="anonymous"></script>
         </Head>
         <Analytics />
         <html lang="es">
