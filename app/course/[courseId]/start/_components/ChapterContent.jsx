@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react'
 import Markdown from 'react-markdown'
 import YouTube from 'react-youtube'
@@ -12,37 +14,45 @@ const opts = {
 }
 const ChapterContent = ({chapter, content}) => {
 
+    // Verificar que tenemos contenido válido
+    const sections = content?.content?.sections || [];
+
   return (
     <div className='p-10'>
       <h2 className='font-medium text-2xl'>{chapter?.name}</h2>
       <p className='text-gray-500'> {chapter?.about}</p>
 
       {/* video  */}
-      <div className='mt-3 flex justify-center'>
+      {content?.videoId && (
+                <div className='mt-5 mb-8 flex justify-center'>
 
       <YouTube
-      videoId={content?.videoId}
+      videoId={content.videoId}
       opts={opts}
+      className="rounded-lg overflow-hidden shadow-lg"
 
       />
       </div>
+      )}
 
 
       {/* content  */}
-      <div>
-        {content?.content?.map((item,index)=>(
-            <div className='p-5 bg-slate-50 mb-3 rounded-md'>
-                <h2 className='font-medium text-lg'>{item?.title}</h2>
-                {/* <p className='whitespace-pre-wrap mt-1 ml-2'>{item?.description}</p>
-                 */}
-                 <Markdown>{item?.description}</Markdown>
-               {item?.codeExample && <div className='p-4 bg-black text-white rounded-md mt-3'>
-                <pre>
-                    <code>
-                        {item?.codeExample}
-                    </code>
-                </pre>
-                </div>}
+      <div className="space-y-6">
+        {sections.map((section, index) => (
+            <div key={index} className='p-6 bg-slate-50 rounded-lg shadow-sm'>
+                <h2 className='font-medium text-xl text-gray-900 mb-3'>{section.title}</h2>
+                <div className='prose prose-slate max-w-none'>
+                    <Markdown>{section.description}</Markdown>
+                </div>
+                {section.code && (
+                    <div className='mt-4 p-4 bg-gray-900 text-white rounded-md overflow-x-auto'>
+                        <pre className='text-sm'>
+                            <code>
+                                {section.code.replace(/<\/?precode>/g, '')}
+                            </code>
+                        </pre>
+                    </div>
+                )}
             </div>
         ))}
       </div>

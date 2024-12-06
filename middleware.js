@@ -1,17 +1,33 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-const isProtectedRoute = createRouteMatcher(
-    ['/dashboard(.*)','/create-course']
-)
+// Define protected routes that require authentication
+const isProtectedRoute = createRouteMatcher([
+  '/dashboard(.*)',
+  '/create-course(.*)', 
+  '/course/:courseId/start',
+  '/course/:courseId/edit',
+  '/explore-course(.*)',
+  '/profile(.*)'
+])
 
 export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth().protect()
+  // Add security headers
+  const headers = new Headers(req.headers);
+  headers.set('X-Frame-Options', 'DENY');
+  headers.set('X-Content-Type-Options', 'nosniff');
+  headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  
+  if (isProtectedRoute(req)) {
+    auth().protect();
+  }
 })
+
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Skip Next.js internals and all static files
+    '/((?!_next/static|_next/image|favicon.ico).*)',
     // Always run for API routes
-    '/(api|trpc)(.*)',
+    '/(api|trpc)(.*)'
   ],
 }

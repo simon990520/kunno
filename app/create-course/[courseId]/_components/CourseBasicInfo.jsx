@@ -95,6 +95,7 @@ const CourseBasicInfo = ({ course, refreshData,edit=true }) => {
               width={600}
               height={300}
               className="w-ful rounded-xl h-[250px] object-cover cursor-pointer"
+              alt={`Portada del curso ${course?.courseOutput?.course?.name || 'Nuevo curso'}`}
             />
          </label>
          {edit &&

@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Head from "next/head";
 import Analytics from "./_components/Analytics";
+import { Toaster } from "sonner";
 const inter = Outfit({ subsets: ["latin"] });
 
 export const metadata = {
@@ -57,7 +58,10 @@ export default function RootLayout({ children }) {
         </Head>
         <Analytics />
         <html lang="es">
-          <body className={inter.className}>{children}</body>
+          <body className={inter.className}>
+            {children}
+            <Toaster richColors />
+          </body>
         </html>
       </ClerkProvider>
     </>

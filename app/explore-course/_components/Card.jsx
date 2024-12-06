@@ -34,6 +34,7 @@ const Card = ({ course, refreshData }) => {
           width={300}
           height={200}
           className="w-full h-[200px] rounded-md object-cover"
+          alt={`Banner del curso ${course?.courseOutput?.course?.name || 'Curso'}`}
         />
       </Link>
       <div className="p-2">
@@ -78,6 +79,7 @@ const Card = ({ course, refreshData }) => {
               width={30}
               height={30}
               className="rounded-full"
+              alt={`Foto de perfil de ${course?.userName || 'usuario'}`}
             />
             <h2>{course?.userName}</h2>
           </div>

@@ -24,12 +24,25 @@ const Header = () => {
   const path = usePathname();
   const { signOut } = useClerk();
   const router = useRouter();
+  
   const isAdmin = adminConfig.emails.includes(
     user?.primaryEmailAddress?.emailAddress
   );
+
   const handleLogout = async () => {
-    await signOut({ redirectTo: '/' }); // Redirect after logout
+    await signOut({ redirectTo: '/' });
   };
+
+  const isActiveRoute = (itemPath) => {
+    // For dashboard home
+    if (itemPath === '/dashboard' && path === '/dashboard') {
+      return true;
+    }
+    // For other routes, check if the current path starts with the menu item path
+    // but exclude the dashboard path to prevent it from being active when in subroutes
+    return itemPath !== '/dashboard' && path.startsWith(itemPath);
+  };
+
   const menu = [
     {
       id: 1,
@@ -41,7 +54,7 @@ const Header = () => {
       id: 2,
       name: "Explorar",
       icon: <HiOutlineSquare3Stack3D />,
-      path: "/dashboard/explore",
+      path: "/explore-course",
     },
     {
       id: 3,
@@ -59,7 +72,6 @@ const Header = () => {
           },
         ]
       : []),
-
     {
       id: 4,
       name: "Salir",
@@ -68,50 +80,49 @@ const Header = () => {
       isLogout: true,
     },
   ];
+
   return (
     <div className="flex justify-between items-center gap-2 p-5 shadow-sm">
       <div className="flex items-center gap-2">
-           <Link className="flex items-center gap-2 cursor-pointer" href={'/'}>
-        <Image src={"/logo.png"} width={44} height={44} />{" "}
-        <span className="font-bold text-xl">Kunno app</span>
-           </Link>
-
+        <Link className="flex items-center gap-2 cursor-pointer" href={'/'}>
+          <Image src={"/logo.png"} width={44} height={44} alt="Kunno App Logo" />
+          <span className="font-bold text-xl">Kunno app</span>
+        </Link>
       </div>
+      
       <div className="md:hidden">
-            <DropdownMenu className=''>
-              <DropdownMenuTrigger className="p-4">Menu</DropdownMenuTrigger>
-              <DropdownMenuContent>
-        {menu.map((item) => (
-           item.isLogout ? (
-            <li
-            key={item.id}
-            className={`flex items-center gap-2 text-gray-600 cursor-pointer p-3 hover:bg-gray-100 hover:text-black rounded-lg mb-3`}
-            onClick={handleLogout}
-          >
-            <div>{item.icon}</div>
-            <h2>{item.name}</h2>
-          </li>
-        ) : (
-
-          <Link href={item.path}>
-                <DropdownMenuItem>
-                  <li
-                    key={item.id}
-                    className={`flex text-xs items-center gap-1 text-gray-600 cursor-pointer p-3 hover:bg-gray-100 hover:text-black rounded-lg mb-3 ${
-                      item.path == path && "bg-gray-100 text-black"
-                    }`}
-                  >
-                    <div>{item.icon}</div>
-                    <h2>{item.name}</h2>
-                  </li>
-                </DropdownMenuItem>
-          </Link>
-        )
-        ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="p-4">Menu</DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {menu.map((item) => (
+              item.isLogout ? (
+                <li
+                  key={item.id}
+                  className="flex items-center gap-2 text-gray-600 cursor-pointer p-3 hover:bg-gray-100 hover:text-black rounded-lg mb-3"
+                  onClick={handleLogout}
+                >
+                  <div>{item.icon}</div>
+                  <h2>{item.name}</h2>
+                </li>
+              ) : (
+                <Link href={item.path} key={item.id}>
+                  <DropdownMenuItem>
+                    <li
+                      className={`flex text-xs items-center gap-1 text-gray-600 cursor-pointer p-3 hover:bg-gray-100 hover:text-black rounded-lg mb-3 ${
+                        isActiveRoute(item.path) ? "bg-gray-100 text-black" : ""
+                      }`}
+                    >
+                      <div>{item.icon}</div>
+                      <h2>{item.name}</h2>
+                    </li>
+                  </DropdownMenuItem>
+                </Link>
+              )
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-      <UserButton />
+      <UserButton afterSignOutUrl="/" />
     </div>
   );
 };
