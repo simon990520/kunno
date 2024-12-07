@@ -2,10 +2,14 @@
 
 import React, { useContext, useState } from "react";
 import { Progress } from "@/components/ui/progress";
-import { HiOutlineHome } from "react-icons/hi";
-import { CiPower } from "react-icons/ci";
-import { HiOutlineShieldCheck, HiOutlineBookOpen } from "react-icons/hi";
+import { 
+  HiOutlineHome,
+  HiOutlineShieldCheck, 
+  HiOutlineBookOpen,
+  HiOutlineAcademicCap
+} from "react-icons/hi";
 import { HiOutlineSquare3Stack3D } from "react-icons/hi2";
+import { CiPower } from "react-icons/ci";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserCourseListContext } from "@/app/_context/UserCourseListContext";
@@ -72,6 +76,12 @@ const Sidebar = () => {
     },
     {
       id: 5,
+      name: "Repasar",
+      icon: <HiOutlineAcademicCap />,
+      path: "/dashboard/review",
+    },
+    {
+      id: 6,
       name: "Cuenta",
       icon: <HiOutlineShieldCheck />,
       path: "#",
@@ -80,7 +90,7 @@ const Sidebar = () => {
     ...(isAdmin
       ? [
           {
-            id: 6,
+            id: 7,
             name: "Admin Users",
             icon: <HiOutlineShieldCheck />,
             path: "/dashboard/admin-users",
@@ -88,7 +98,7 @@ const Sidebar = () => {
         ]
       : []),
     {
-      id: 7,
+      id: 8,
       name: "Salir",
       icon: <CiPower />,
       path: "/dashboard/logout",
