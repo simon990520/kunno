@@ -1,3 +1,5 @@
+"use client";
+
 import { adminConfig } from "@/configs/AdminConfig";
 import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";

@@ -1,91 +1,81 @@
-"use client";
-
-import React, { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { HiPencilSquare, HiTrash, HiDocumentText, HiChevronDown } from "react-icons/hi2";
-import { BsBook } from "react-icons/bs";
+import { Card } from "@/components/ui/card";
+import { HiPencil, HiTrash, HiPlus, HiChevronDown } from "react-icons/hi2";
+import { BsJournalText } from "react-icons/bs";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import NotesList from './NotesList';
+} from "@/components/ui/collapsible"
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 const SubjectCard = ({ subject, onEdit, onDelete, onAddNote, onEditNote, onDeleteNote }) => {
   const [isOpen, setIsOpen] = useState(false);
-  
-  if (!subject) return null;
-
-  // Calcular la cantidad de apuntes considerando que notes puede ser un objeto o undefined
-  const notesCount = subject.notes ? 
-    (typeof subject.notes === 'object' ? Object.keys(subject.notes).length : 0) : 0;
-    
-  const lastUpdated = new Date(subject.updatedAt).toLocaleDateString();
-
-  console.log('Subject notes:', subject.notes); // Para debug
-  console.log('Notes count:', notesCount); // Para debug
+  const notesCount = subject.notes ? Object.keys(subject.notes).length : 0;
+  const formattedDate = format(new Date(subject.updatedAt), "dd 'de' MMMM, yyyy", { locale: es });
 
   return (
-    <Card className="relative bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-orange-100 p-2 rounded-lg">
-              <BsBook className="h-4 w-4 text-orange-600" />
-            </div>
-            <CardTitle className="text-lg font-medium text-gray-800">
-              {subject.name}
-            </CardTitle>
+    <Card className="overflow-hidden transition-all hover:shadow-lg">
+      {/* Card Header with Subject Color */}
+      <div 
+        className="h-2"
+        style={{ backgroundColor: subject.color || '#FF6B00' }} 
+      />
+      
+      <div className="p-6 space-y-4">
+        {/* Subject Header */}
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <h3 className="font-semibold tracking-tight text-lg">{subject.name}</h3>
+            <p className="text-sm text-muted-foreground">
+              {notesCount} {notesCount === 1 ? 'apunte' : 'apuntes'}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-8 w-8 p-0 border-gray-200 hover:border-blue-500 hover:text-blue-500"
-              onClick={() => onEdit(subject)}
-            >
-              <HiPencilSquare className="h-4 w-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-8 w-8 p-0 border-gray-200 hover:border-red-500 hover:text-red-500"
-              onClick={() => onDelete(subject.id)}
-            >
-              <HiTrash className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-        {subject.description && (
-          <CardDescription className="mt-2 text-sm text-gray-600 line-clamp-2">
-            {subject.description}
-          </CardDescription>
-        )}
-      </CardHeader>
-
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CardContent className="pb-4">
-          <div className="flex items-center justify-between text-sm">
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="p-0 h-auto hover:bg-transparent flex items-center gap-2 text-gray-600"
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Abrir menú</span>
+                <HiPencil className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={onEdit}>
+                <HiPencil className="mr-2 h-4 w-4" />
+                Editar materia
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-red-600"
+                onClick={onDelete}
               >
-                <Badge variant="secondary" className="bg-orange-50 text-orange-700 hover:bg-orange-100">
-                  {notesCount} {notesCount === 1 ? 'apunte' : 'apuntes'}
-                </Badge>
+                <HiTrash className="mr-2 h-4 w-4" />
+                Eliminar materia
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Notes Section */}
+        <Collapsible
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          className="space-y-2"
+        >
+          <div className="flex items-center justify-between">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="flex items-center gap-2 p-0 h-9 w-full justify-between">
+                <span className="text-sm font-medium">
+                  Ver apuntes
+                </span>
                 <HiChevronDown
                   className={`h-4 w-4 transition-transform duration-200 ${
                     isOpen ? "transform rotate-180" : ""
@@ -93,33 +83,77 @@ const SubjectCard = ({ subject, onEdit, onDelete, onAddNote, onEditNote, onDelet
                 />
               </Button>
             </CollapsibleTrigger>
-            <span className="text-gray-500 text-xs">
-              Actualizado: {lastUpdated}
-            </span>
           </div>
 
-          <CollapsibleContent className="mt-4">
-            <NotesList
-              notes={subject.notes || {}}
-              onEdit={onEditNote}
-              onDelete={onDeleteNote}
-              onAdd={() => onAddNote(subject)}
-            />
-          </CollapsibleContent>
-        </CardContent>
-      </Collapsible>
+          <CollapsibleContent className="space-y-2">
+            {/* Add Note Button */}
+            <Button
+              onClick={onAddNote}
+              className="w-full btn-primary justify-center gap-2 mb-3"
+            >
+              <HiPlus className="h-4 w-4" />
+              Crear nuevo apunte
+            </Button>
 
-      <CardFooter className="pt-4 border-t border-gray-100">
-        <Button
-          type="button"
-          variant="ghost"
-          className="w-full justify-start text-gray-600 hover:text-orange-600 hover:bg-orange-50"
-          onClick={() => onAddNote(subject)}
-        >
-          <HiDocumentText className="mr-2 h-4 w-4" />
-          Agregar Apunte
-        </Button>
-      </CardFooter>
+            {/* Notes List */}
+            <div className="space-y-2">
+              {subject.notes && Object.entries(subject.notes)
+                .sort(([, a], [, b]) => new Date(b.updatedAt) - new Date(a.updatedAt))
+                .map(([noteId, note]) => (
+                  <div
+                    key={noteId}
+                    className="flex items-center justify-between p-3 rounded-md bg-muted/50 hover:bg-muted transition-colors"
+                  >
+                    <div className="flex items-center space-x-3 min-w-0">
+                      <BsJournalText className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-medium truncate">
+                          {note.title}
+                        </h4>
+                        {note.content && (
+                          <p className="text-xs text-muted-foreground truncate mt-0.5">
+                            {note.content}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-1 flex-shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0"
+                        onClick={() => onEditNote(note)}
+                      >
+                        <HiPencil className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0 text-red-600"
+                        onClick={() => onDeleteNote(noteId)}
+                      >
+                        <HiTrash className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+
+              {(!subject.notes || Object.keys(subject.notes).length === 0) && (
+                <div className="text-center py-4 text-sm text-muted-foreground">
+                  No hay apuntes en esta materia
+                </div>
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Card Footer */}
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground">
+            Última actualización: {formattedDate}
+          </p>
+        </div>
+      </div>
     </Card>
   );
 };

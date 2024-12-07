@@ -1,5 +1,6 @@
 "use client";
 
+import { v4 as uuidv4 } from 'uuid';
 import { Button } from "@/components/ui/button";
 import { get, ref, remove, set, update } from "firebase/database";
 import { realtimeDb } from "@/configs/firebaseConfig";
@@ -76,14 +77,14 @@ const SubjectsPage = () => {
       };
 
       if (!editingSubject) {
-        // Crear nueva materia
+        // Crear nueva materia usando UUID
         subjectData = {
           ...subjectData,
           createdAt: now,
           createdBy: user?.id || 'unknown',
           notes: {}
         };
-        const subjectId = Date.now().toString();
+        const subjectId = uuidv4(); // Generar UUID para la materia
         const newSubjectRef = ref(realtimeDb, `subjects/${subjectId}`);
         await set(newSubjectRef, subjectData);
         toast.success('Materia creada exitosamente');
@@ -114,7 +115,7 @@ const SubjectsPage = () => {
 
     try {
       const now = new Date().toISOString();
-      const noteId = editingNote ? editingNote.id : Date.now().toString();
+      const noteId = editingNote ? editingNote.id : uuidv4(); // Usar UUID para notas
       
       const noteData = {
         ...formData,
@@ -161,7 +162,7 @@ const SubjectsPage = () => {
 
     try {
       // Eliminar la nota específica
-      const noteRef = ref(realtimeDb, `subjects/${currentSubject.id}/notes/${deleteNoteId}`);
+      const noteRef = ref(realtimeDb, `subjects/${currentSubject.id}/notes/${deleteNoteId.noteId}`);
       await remove(noteRef);
 
       // Actualizar la fecha de actualización de la materia
@@ -200,101 +201,125 @@ const SubjectsPage = () => {
     setIsNoteModalOpen(false);
   };
 
-  const filteredSubjects = subjects.filter(subject =>
-    subject.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Materias</h1>
-          <Button
-            onClick={() => handleOpenSubjectModal()}
-            className="bg-orange-600 text-white hover:bg-orange-700"
-          >
-            <HiPlus className="mr-2 h-4 w-4" />
-            Nueva Materia
-          </Button>
+    <div className="p-6 space-y-6">
+      {/* Header Section */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Materias</h1>
+          <p className="text-muted-foreground">Gestiona tus materias y apuntes de forma organizada</p>
         </div>
-
-        <div className="relative">
-          <HiMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-          <Input
-            type="text"
-            placeholder="Buscar materias..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSubjects.length > 0 ? (
-            filteredSubjects.map((subject) => (
-              <SubjectCard
-                key={subject.id}
-                subject={subject}
-                onEdit={() => handleOpenSubjectModal(subject)}
-                onDelete={() => setDeleteSubjectId(subject.id)}
-                onAddNote={() => handleOpenNoteModal(subject)}
-                onEditNote={(note) => handleOpenNoteModal(subject, note)}
-                onDeleteNote={(noteId) => {
-                  setCurrentSubject(subject);
-                  setDeleteNoteId(noteId);
-                }}
-              />
-            ))
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center p-8 bg-white rounded-lg border border-gray-200">
-              <div className="text-center">
-                <HiPlus className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No hay materias</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Comienza creando una nueva materia
-                </p>
-                <div className="mt-6">
-                  <Button
-                    onClick={() => handleOpenSubjectModal()}
-                    className="bg-orange-600 text-white hover:bg-orange-700"
-                  >
-                    <HiPlus className="mr-2 h-4 w-4" />
-                    Nueva Materia
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+        <Button 
+          onClick={() => {
+            setEditingSubject(null);
+            setIsSubjectModalOpen(true);
+          }}
+          className="btn-primary w-full md:w-auto"
+        >
+          <HiPlus className="w-5 h-5 mr-2" />
+          Nueva Materia
+        </Button>
       </div>
 
+      {/* Search Bar */}
+      <div className="relative">
+        <HiMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <Input
+          type="text"
+          placeholder="Buscar materias..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10 bg-background"
+        />
+      </div>
+
+      {/* Subjects Grid */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {subjects
+          .filter((subject) =>
+            subject.name.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((subject) => (
+            <SubjectCard
+              key={subject.id}
+              subject={subject}
+              onEdit={() => {
+                setEditingSubject(subject);
+                setIsSubjectModalOpen(true);
+              }}
+              onDelete={() => setDeleteSubjectId(subject.id)}
+              onAddNote={() => {
+                setCurrentSubject(subject);
+                setEditingNote(null);
+                setIsNoteModalOpen(true);
+              }}
+              onEditNote={(note) => {
+                setCurrentSubject(subject);
+                setEditingNote(note);
+                setIsNoteModalOpen(true);
+              }}
+              onDeleteNote={(noteId) => setDeleteNoteId({ subjectId: subject.id, noteId })}
+            />
+          ))}
+      </div>
+
+      {/* Empty State */}
+      {subjects.length === 0 && (
+        <div className="flex flex-col items-center justify-center p-8 text-center bg-muted/10 rounded-lg">
+          <div className="w-16 h-16 mb-4 text-muted-foreground">
+            {/* Puedes agregar un icono aquí */}
+          </div>
+          <h3 className="text-lg font-semibold">No hay materias</h3>
+          <p className="text-muted-foreground">
+            Comienza creando tu primera materia para organizar tus apuntes
+          </p>
+          <Button 
+            onClick={() => {
+              setEditingSubject(null);
+              setIsSubjectModalOpen(true);
+            }}
+            className="btn-primary mt-4"
+          >
+            <HiPlus className="w-5 h-5 mr-2" />
+            Crear Materia
+          </Button>
+        </div>
+      )}
+
+      {/* Modals */}
       <SubjectModal
         isOpen={isSubjectModalOpen}
-        onClose={handleCloseSubjectModal}
+        onClose={() => setIsSubjectModalOpen(false)}
         onSave={handleSaveSubject}
         subject={editingSubject}
       />
 
       <NoteModal
         isOpen={isNoteModalOpen}
-        onClose={handleCloseNoteModal}
+        onClose={() => setIsNoteModalOpen(false)}
         onSave={handleSaveNote}
         note={editingNote}
+        subject={currentSubject}
       />
 
+      {/* Delete Subject Dialog */}
       <AlertDialog open={!!deleteSubjectId} onOpenChange={() => setDeleteSubjectId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará la materia y todos sus apuntes permanentemente.
+              Esta acción eliminará la materia y todos sus apuntes asociados.
+              Esta acción no se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteSubject}
-              className="bg-red-600 text-white hover:bg-red-700"
+              className="btn-primary"
+              onClick={() => {
+                handleDeleteSubject(deleteSubjectId);
+                setDeleteSubjectId(null);
+              }}
             >
               Eliminar
             </AlertDialogAction>
@@ -302,19 +327,29 @@ const SubjectsPage = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={!!deleteNoteId} onOpenChange={() => setDeleteNoteId(null)}>
+      {/* Delete Note Dialog */}
+      <AlertDialog 
+        open={!!deleteNoteId} 
+        onOpenChange={() => setDeleteNoteId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará el apunte permanentemente.
+              Esta acción eliminará el apunte seleccionado.
+              Esta acción no se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteNote}
-              className="bg-red-600 text-white hover:bg-red-700"
+              className="btn-primary"
+              onClick={() => {
+                if (deleteNoteId) {
+                  handleDeleteNote(deleteNoteId.subjectId, deleteNoteId.noteId);
+                  setDeleteNoteId(null);
+                }
+              }}
             >
               Eliminar
             </AlertDialogAction>

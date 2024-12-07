@@ -34,7 +34,7 @@ const Sidebar = () => {
   };
 
   const isActiveRoute = (itemPath, itemId) => {
-    if (itemId === 4) {
+    if (itemId === 5) {
       return activeItem === 'account';
     }
     
@@ -66,6 +66,12 @@ const Sidebar = () => {
     },
     {
       id: 4,
+      name: "Apuntes",
+      icon: <HiOutlineBookOpen />,
+      path: "/dashboard/notes",
+    },
+    {
+      id: 5,
       name: "Cuenta",
       icon: <HiOutlineShieldCheck />,
       path: "#",
@@ -74,7 +80,7 @@ const Sidebar = () => {
     ...(isAdmin
       ? [
           {
-            id: 5,
+            id: 6,
             name: "Admin Users",
             icon: <HiOutlineShieldCheck />,
             path: "/dashboard/admin-users",
@@ -82,7 +88,7 @@ const Sidebar = () => {
         ]
       : []),
     {
-      id: 6,
+      id: 7,
       name: "Salir",
       icon: <CiPower />,
       path: "/dashboard/logout",
