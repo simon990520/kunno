@@ -9,10 +9,32 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 const NoteViewer = ({ isOpen, onClose, note, onEdit }) => {
-  if (!note) return null;
+  console.log('NoteViewer - Component rendered with props:', { isOpen, note });
+  
+  // Only render the Dialog if both isOpen is true and note exists
+  if (!isOpen || !note) {
+    console.log('NoteViewer - Not rendering:', { isOpen, hasNote: !!note });
+    return null;
+  }
 
   const formatDate = (dateString) => {
-    return format(new Date(dateString), "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es });
+    console.log('NoteViewer - Formatting date:', dateString);
+    try {
+      return format(new Date(dateString), "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es });
+    } catch (error) {
+      console.error('NoteViewer - Error formatting date:', error);
+      return 'Fecha no disponible';
+    }
+  };
+
+  const handleEdit = () => {
+    console.log('NoteViewer - Editing note:', note);
+    onEdit(note);
+  };
+
+  const handleClose = () => {
+    console.log('NoteViewer - Closing viewer');
+    onClose();
   };
 
   const containerVariants = {
@@ -47,7 +69,7 @@ const NoteViewer = ({ isOpen, onClose, note, onEdit }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] p-0 gap-0 bg-gradient-to-br from-white to-orange-50">
         <DialogHeader className="sr-only">
           <DialogTitle>{note.title}</DialogTitle>
@@ -74,7 +96,7 @@ const NoteViewer = ({ isOpen, onClose, note, onEdit }) => {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => onEdit(note)}
+                    onClick={handleEdit}
                     className="hover:bg-orange-100"
                   >
                     <HiPencil className="h-4 w-4" />
@@ -83,7 +105,7 @@ const NoteViewer = ({ isOpen, onClose, note, onEdit }) => {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="hover:bg-orange-100"
                   >
                     <HiX className="h-4 w-4" />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { useForm } from 'react-hook-form';
@@ -13,11 +13,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
   title: z.string().min(1, 'El título es requerido'),
-  subject: z.string().min(1, 'La materia es requerida'),
   content: z.string().min(1, 'El contenido es requerido'),
+  subjectId: z.string().min(1, 'La materia es requerida'),
 });
 
 const EditNotePage = ({ params }) => {
@@ -25,28 +26,78 @@ const EditNotePage = ({ params }) => {
   const { user } = useUser();
   const { toast } = useToast();
   const { noteId } = params;
+  const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  console.log('EditNotePage - Initial render with params:', { noteId, userId: user?.id });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
-      subject: '',
       content: '',
+      subjectId: '',
     },
   });
 
   useEffect(() => {
-    const fetchNote = async () => {
-      if (!user || !noteId) return;
+    const fetchData = async () => {
+      if (!user || !noteId) {
+        console.log('EditNotePage - Missing user or noteId:', { user, noteId });
+        return;
+      }
 
       try {
-        const noteRef = ref(realtimeDb, `notes/${user.id}/${noteId}`);
-        const snapshot = await get(noteRef);
+        console.log('EditNotePage - Fetching subjects...');
+        // First, load all subjects
+        const subjectsRef = ref(realtimeDb, 'subjects');
+        const subjectsSnapshot = await get(subjectsRef);
         
-        if (snapshot.exists()) {
-          const noteData = snapshot.val();
-          form.reset(noteData);
+        if (!subjectsSnapshot.exists()) {
+          console.log('EditNotePage - No subjects found');
+          toast({
+            title: "Error",
+            description: "No se encontraron materias",
+            variant: "destructive",
+          });
+          router.push('/dashboard/notes');
+          return;
+        }
+
+        const subjectsData = subjectsSnapshot.val();
+        console.log('EditNotePage - Subjects data:', subjectsData);
+        
+        const subjectsList = [];
+        let foundNote = null;
+        let foundSubjectId = null;
+
+        // Convert subjects and find the note
+        for (const [subjectId, subject] of Object.entries(subjectsData)) {
+          subjectsList.push({
+            id: subjectId,
+            name: subject.name,
+          });
+
+          console.log(`EditNotePage - Checking subject ${subjectId} for note ${noteId}`);
+          if (subject.notes && subject.notes[noteId]) {
+            console.log('EditNotePage - Found note in subject:', subjectId);
+            foundNote = subject.notes[noteId];
+            foundSubjectId = subjectId;
+          }
+        }
+
+        setSubjects(subjectsList);
+        console.log('EditNotePage - Subjects list:', subjectsList);
+
+        if (foundNote) {
+          console.log('EditNotePage - Setting form with found note:', foundNote);
+          form.reset({
+            title: foundNote.title,
+            content: foundNote.content,
+            subjectId: foundSubjectId,
+          });
         } else {
+          console.log('EditNotePage - Note not found:', noteId);
           toast({
             title: "Error",
             description: "No se encontró el apunte",
@@ -55,25 +106,36 @@ const EditNotePage = ({ params }) => {
           router.push('/dashboard/notes');
         }
       } catch (error) {
-        console.error('Error fetching note:', error);
+        console.error('EditNotePage - Error fetching note:', error);
         toast({
           title: "Error",
           description: "No se pudo cargar el apunte",
           variant: "destructive",
         });
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchNote();
+    fetchData();
   }, [user, noteId, form, router, toast]);
 
   const onSubmit = async (data) => {
+    console.log('EditNotePage - Submitting form with data:', data);
     try {
-      const noteRef = ref(realtimeDb, `notes/${user.id}/${noteId}`);
-      await update(noteRef, {
-        ...data,
+      const noteRef = ref(realtimeDb, `subjects/${data.subjectId}/notes/${noteId}`);
+      console.log('EditNotePage - Updating note at path:', `subjects/${data.subjectId}/notes/${noteId}`);
+      
+      const updateData = {
+        title: data.title,
+        content: data.content,
         updatedAt: serverTimestamp(),
-      });
+        updatedBy: user.id,
+      };
+      console.log('EditNotePage - Update data:', updateData);
+
+      await update(noteRef, updateData);
+      console.log('EditNotePage - Note updated successfully');
 
       toast({
         title: "Apunte actualizado",
@@ -82,7 +144,7 @@ const EditNotePage = ({ params }) => {
 
       router.push('/dashboard/notes');
     } catch (error) {
-      console.error('Error updating note:', error);
+      console.error('EditNotePage - Error updating note:', error);
       toast({
         title: "Error",
         description: "No se pudo actualizar el apunte",
@@ -90,6 +152,10 @@ const EditNotePage = ({ params }) => {
       });
     }
   };
+
+  if (loading) {
+    return <div className="p-6">Cargando...</div>;
+  }
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
@@ -116,13 +182,22 @@ const EditNotePage = ({ params }) => {
 
           <FormField
             control={form.control}
-            name="subject"
+            name="subjectId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Materia</FormLabel>
-                <FormControl>
-                  <Input placeholder="Nombre de la materia" {...field} />
-                </FormControl>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona una materia" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subjects.map((subject) => (
+                      <SelectItem key={subject.id} value={subject.id}>
+                        {subject.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

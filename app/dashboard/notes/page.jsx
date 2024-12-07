@@ -117,6 +117,9 @@ export default function NotesPage() {
   }, [user]);
 
   const handleSaveNote = async (formData) => {
+    console.log('NotesPage - Saving note with form data:', formData);
+    console.log('NotesPage - Current editing note:', editingNote);
+    
     try {
       const now = new Date().toISOString();
       const subject = subjects.find(s => s.id === formData.subjectId);
@@ -136,14 +139,18 @@ export default function NotesPage() {
         createdBy: user?.id,
       };
 
+      console.log('NotesPage - Prepared note data:', noteData);
+
       if (editingNote) {
         // Actualizar nota existente
         const noteRef = ref(realtimeDb, `subjects/${formData.subjectId}/notes/${editingNote.id}`);
+        console.log('NotesPage - Updating existing note at path:', `subjects/${formData.subjectId}/notes/${editingNote.id}`);
         await update(noteRef, noteData);
         toast.success("Apunte actualizado exitosamente");
       } else {
         // Crear nueva nota
         const notesRef = ref(realtimeDb, `subjects/${formData.subjectId}/notes`);
+        console.log('NotesPage - Creating new note under subject:', formData.subjectId);
         const newNoteRef = push(notesRef);
         await set(newNoteRef, noteData);
         toast.success("Apunte creado exitosamente");
@@ -152,7 +159,7 @@ export default function NotesPage() {
       handleCloseNoteModal();
       loadSubjectsAndNotes(); // Cargar notas actualizadas
     } catch (error) {
-      console.error("Error al guardar el apunte:", error);
+      console.error("NotesPage - Error saving note:", error);
       toast.error("Error al guardar el apunte");
     }
   };
@@ -227,11 +234,13 @@ export default function NotesPage() {
   };
 
   const handleOpenNoteModal = (note = null) => {
+    console.log('NotesPage - Opening note modal with note:', note);
     setEditingNote(note);
     setIsNoteModalOpen(true);
   };
 
   const handleCloseNoteModal = () => {
+    console.log('NotesPage - Closing note modal, current editing note:', editingNote);
     setEditingNote(null);
     setIsNoteModalOpen(false);
   };
@@ -426,7 +435,10 @@ export default function NotesPage() {
                     <Card 
                       key={`personal-note-${note.id}`}
                       className="p-4 h-[200px] hover:shadow-lg transition-shadow cursor-pointer flex flex-col justify-between group hover:border-orange-200"
-                      onClick={() => setViewingNote(note)}
+                      onClick={() => {
+                        console.log('NotesPage - Setting viewingNote:', note);
+                        setViewingNote(note);
+                      }}
                     >
                       <div>
                         <h3 className="font-semibold mb-1 line-clamp-1 group-hover:text-orange-600 transition-colors">{note.title}</h3>
@@ -491,9 +503,13 @@ export default function NotesPage() {
       {/* Note Viewer */}
       <NoteViewer
         isOpen={!!viewingNote}
-        onClose={() => setViewingNote(null)}
+        onClose={() => {
+          console.log('NotesPage - Closing NoteViewer, current viewingNote:', viewingNote);
+          setViewingNote(null);
+        }}
         note={viewingNote}
         onEdit={(note) => {
+          console.log('NotesPage - Editing note from viewer:', note);
           setViewingNote(null);
           handleOpenNoteModal(note);
         }}

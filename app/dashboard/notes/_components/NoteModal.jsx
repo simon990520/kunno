@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { improveNote } from "@/services/gemini";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -21,6 +21,8 @@ const formSchema = z.object({
 });
 
 const NoteModal = ({ isOpen, onClose, onSave, note, subjects, mode = "create" }) => {
+  console.log('NoteModal - Initialized with props:', { isOpen, note, subjects, mode });
+  
   const [isImproving, setIsImproving] = useState(false);
   const [improvedContent, setImprovedContent] = useState("");
   const [showImprovedContent, setShowImprovedContent] = useState(false);
@@ -34,9 +36,24 @@ const NoteModal = ({ isOpen, onClose, onSave, note, subjects, mode = "create" })
     },
   });
 
+  // Reset form when note changes
+  useEffect(() => {
+    console.log('NoteModal - Note changed, resetting form with:', note);
+    if (note) {
+      form.reset({
+        title: note.title || "",
+        content: note.content || "",
+        subjectId: note.subjectId || "",
+      });
+    }
+  }, [note, form]);
+
   const handleImproveContent = async () => {
+    console.log('NoteModal - Improving content');
     const content = form.getValues("content");
     const subjectId = form.getValues("subjectId");
+    
+    console.log('NoteModal - Current form values:', { content, subjectId });
     
     if (!content || !subjectId) {
       toast.error("Por favor, ingresa el contenido y selecciona una materia antes de mejorar");
@@ -64,14 +81,16 @@ const NoteModal = ({ isOpen, onClose, onSave, note, subjects, mode = "create" })
   };
 
   const onSubmit = async (data) => {
+    console.log('NoteModal - Submitting form with data:', data);
     try {
       await onSave(data);
+      console.log('NoteModal - Save successful, resetting form');
       form.reset();
       setImprovedContent("");
       setShowImprovedContent(false);
       onClose();
     } catch (error) {
-      console.error("Error al guardar la nota:", error);
+      console.error("NoteModal - Error saving note:", error);
       toast.error("Error al guardar la nota");
     }
   };
