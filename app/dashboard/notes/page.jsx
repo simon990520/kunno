@@ -13,6 +13,13 @@ import { Card } from "@/components/ui/card";
 import { HiPlus } from "react-icons/hi";
 import { BiSearch } from "react-icons/bi";
 import { HiPencil, HiTrash } from "react-icons/hi2";
+import { 
+  HiOutlineBookOpen,
+  HiOutlineDocumentText,
+  HiOutlinePencil,
+  HiOutlineClipboardList,
+  HiOutlineChartBar
+} from "react-icons/hi";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
@@ -117,9 +124,8 @@ export default function NotesPage() {
   }, [user]);
 
   const handleSaveNote = async (formData) => {
-    console.log('NotesPage - Saving note with form data:', formData);
-    console.log('NotesPage - Current editing note:', editingNote);
-    
+    console.log('DEBUG - Saving note:', formData);
+    console.log('DEBUG - Current editing note before:', editingNote);
     try {
       const now = new Date().toISOString();
       const subject = subjects.find(s => s.id === formData.subjectId);
@@ -139,24 +145,29 @@ export default function NotesPage() {
         createdBy: user?.id,
       };
 
-      console.log('NotesPage - Prepared note data:', noteData);
+      console.log('DEBUG - Prepared note data:', noteData);
 
       if (editingNote) {
         // Actualizar nota existente
         const noteRef = ref(realtimeDb, `subjects/${formData.subjectId}/notes/${editingNote.id}`);
-        console.log('NotesPage - Updating existing note at path:', `subjects/${formData.subjectId}/notes/${editingNote.id}`);
+        console.log('DEBUG - Updating existing note at path:', `subjects/${formData.subjectId}/notes/${editingNote.id}`);
         await update(noteRef, noteData);
-        toast.success("Apunte actualizado exitosamente");
+        toast.success("Nota actualizada exitosamente");
       } else {
         // Crear nueva nota
         const notesRef = ref(realtimeDb, `subjects/${formData.subjectId}/notes`);
-        console.log('NotesPage - Creating new note under subject:', formData.subjectId);
+        console.log('DEBUG - Creating new note under subject:', formData.subjectId);
         const newNoteRef = push(notesRef);
         await set(newNoteRef, noteData);
-        toast.success("Apunte creado exitosamente");
+        toast.success("Nota creada exitosamente");
       }
 
-      handleCloseNoteModal();
+      console.log('DEBUG - Before closing modal after save');
+      // Primero limpiamos el estado de edición
+      setEditingNote(null);
+      // Luego cerramos el modal
+      setIsNoteModalOpen(false);
+      console.log('DEBUG - After closing modal after save');
       loadSubjectsAndNotes(); // Cargar notas actualizadas
     } catch (error) {
       console.error("NotesPage - Error saving note:", error);
@@ -234,13 +245,11 @@ export default function NotesPage() {
   };
 
   const handleOpenNoteModal = (note = null) => {
-    console.log('NotesPage - Opening note modal with note:', note);
     setEditingNote(note);
     setIsNoteModalOpen(true);
   };
 
   const handleCloseNoteModal = () => {
-    console.log('NotesPage - Closing note modal, current editing note:', editingNote);
     setEditingNote(null);
     setIsNoteModalOpen(false);
   };
@@ -281,23 +290,61 @@ export default function NotesPage() {
   }
 
   return (
-    <div className="h-full flex-1 flex-col space-y-8 p-8 flex">
-      <div className="flex items-center justify-between space-y-2">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Apuntes</h2>
-          <p className="text-muted-foreground">
-            Gestiona tus apuntes personales y del curso
-          </p>
-        </div>
-        {activeTab === "personal" && (
-          <div className="flex items-center space-x-2">
-            <Button onClick={() => handleOpenNoteModal()} className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] hover:from-[#FF5F13] hover:to-[#FBB041] text-white">
-              <HiPlus className="mr-2 h-4 w-4" /> Nuevo Apunte
-            </Button>
+    <div className="p-6 space-y-6">
+      {/* Welcome Card */}
+      <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-2xl p-6 mb-8 shadow-lg border border-orange-200">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="space-y-4 flex-1">
+            <div className="flex items-center gap-2">
+              <HiOutlineDocumentText className="text-orange-500 text-2xl" />
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Tus <span className="text-orange-600">apuntes</span>
+              </h2>
+            </div>
+            
+            <div className="flex items-start gap-3 bg-white/60 p-4 rounded-xl">
+              <HiOutlineClipboardList className="text-orange-500 text-xl mt-1" />
+              <div>
+                <p className="text-gray-600 leading-relaxed">
+                  Gestiona tus apuntes de manera eficiente. 
+                  Crea, edita y organiza tus notas por materias y cursos.
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                    <HiOutlineDocumentText className="text-orange-500" />
+                    <span>{userNotes.length} Apuntes</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                    <HiOutlineBookOpen className="text-orange-500" />
+                    <span>{subjects.length} Materias con notas</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                    <HiOutlineChartBar className="text-orange-500" />
+                    <span>{userNotes.filter(note => new Date(note.updatedAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length} Esta semana</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+          {activeTab === "personal" && (
+            <div className="flex-shrink-0">
+              <Button
+                onClick={() => {
+                  setEditingNote(null);
+                  setIsNoteModalOpen(true);
+                }}
+                className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2"
+                disabled={isNoteModalOpen}
+              >
+                <HiPlus className="w-5 h-5" />
+                Crear Apunte
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Main Content */}
       <div className="space-y-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4">

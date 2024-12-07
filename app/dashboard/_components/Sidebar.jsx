@@ -6,7 +6,8 @@ import {
   HiOutlineHome,
   HiOutlineShieldCheck, 
   HiOutlineBookOpen,
-  HiOutlineAcademicCap
+  HiOutlineAcademicCap,
+  HiOutlineLightBulb
 } from "react-icons/hi";
 import { HiOutlineSquare3Stack3D } from "react-icons/hi2";
 import { CiPower } from "react-icons/ci";
@@ -81,7 +82,7 @@ const Sidebar = () => {
       path: "/dashboard/review",
     },
     {
-      id: 6,
+      id: 7,
       name: "Cuenta",
       icon: <HiOutlineShieldCheck />,
       path: "#",
@@ -90,7 +91,7 @@ const Sidebar = () => {
     ...(isAdmin
       ? [
           {
-            id: 7,
+            id: 8,
             name: "Admin Users",
             icon: <HiOutlineShieldCheck />,
             path: "/dashboard/admin-users",
@@ -98,7 +99,7 @@ const Sidebar = () => {
         ]
       : []),
     {
-      id: 8,
+      id: 9,
       name: "Salir",
       icon: <CiPower />,
       path: "/dashboard/logout",

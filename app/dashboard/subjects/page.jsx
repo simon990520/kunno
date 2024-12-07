@@ -12,6 +12,13 @@ import SubjectModal from "./_components/SubjectModal";
 import NoteModal from "./_components/NoteModal";
 import { Input } from "@/components/ui/input";
 import { HiMagnifyingGlass, HiPlus } from "react-icons/hi2";
+import { 
+  HiOutlineBookOpen,
+  HiOutlineDocumentText,
+  HiOutlinePencil,
+  HiOutlineClipboardList,
+  HiOutlineChartBar
+} from "react-icons/hi";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -203,22 +210,55 @@ const SubjectsPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header Section */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Materias</h1>
-          <p className="text-muted-foreground">Gestiona tus materias y apuntes de forma organizada</p>
+      {/* Welcome Card */}
+      <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-2xl p-6 mb-8 shadow-lg border border-orange-200">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="space-y-4 flex-1">
+            <div className="flex items-center gap-2">
+              <HiOutlineBookOpen className="text-orange-500 text-2xl" />
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Tus <span className="text-orange-600">materias</span>
+              </h2>
+            </div>
+            
+            <div className="flex items-start gap-3 bg-white/60 p-4 rounded-xl">
+              <HiOutlineClipboardList className="text-orange-500 text-xl mt-1" />
+              <div>
+                <p className="text-gray-600 leading-relaxed">
+                  Organiza tus materias y notas en un solo lugar. 
+                  Crea, edita y gestiona el contenido de tus materias fácilmente.
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                    <HiOutlineBookOpen className="text-orange-500" />
+                    <span>{subjects.length} Materias</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                    <HiOutlineDocumentText className="text-orange-500" />
+                    <span>{subjects.reduce((total, subject) => total + (subject.notes ? Object.keys(subject.notes).length : 0), 0)} Notas</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                    <HiOutlineChartBar className="text-orange-500" />
+                    <span>{subjects.filter(subject => new Date(subject.updatedAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length} Esta semana</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex-shrink-0">
+            <Button
+              onClick={() => {
+                setEditingSubject(null);
+                setIsSubjectModalOpen(true);
+              }}
+              className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2"
+              disabled={isSubjectModalOpen}
+            >
+              <HiPlus className="w-5 h-5" />
+              Crear Materia
+            </Button>
+          </div>
         </div>
-        <Button 
-          onClick={() => {
-            setEditingSubject(null);
-            setIsSubjectModalOpen(true);
-          }}
-          className="btn-primary w-full md:w-auto"
-        >
-          <HiPlus className="w-5 h-5 mr-2" />
-          Nueva Materia
-        </Button>
       </div>
 
       {/* Search Bar */}
@@ -229,7 +269,7 @@ const SubjectsPage = () => {
           placeholder="Buscar materias..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 bg-background"
+          className="pl-10"
         />
       </div>
 
@@ -279,6 +319,7 @@ const SubjectsPage = () => {
               setIsSubjectModalOpen(true);
             }}
             className="btn-primary mt-4"
+            disabled={isSubjectModalOpen}
           >
             <HiPlus className="w-5 h-5 mr-2" />
             Crear Materia

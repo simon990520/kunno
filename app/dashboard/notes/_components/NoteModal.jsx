@@ -21,7 +21,7 @@ const formSchema = z.object({
 });
 
 const NoteModal = ({ isOpen, onClose, onSave, note, subjects, mode = "create" }) => {
-  console.log('NoteModal - Initialized with props:', { isOpen, note, subjects, mode });
+  console.log('DEBUG - NoteModal render:', { isOpen, mode, noteId: note?.id });
   
   const [isImproving, setIsImproving] = useState(false);
   const [improvedContent, setImprovedContent] = useState("");
@@ -36,9 +36,8 @@ const NoteModal = ({ isOpen, onClose, onSave, note, subjects, mode = "create" })
     },
   });
 
-  // Reset form when note changes
   useEffect(() => {
-    console.log('NoteModal - Note changed, resetting form with:', note);
+    console.log('DEBUG - NoteModal useEffect - note changed:', note);
     if (note) {
       form.reset({
         title: note.title || "",
@@ -81,22 +80,30 @@ const NoteModal = ({ isOpen, onClose, onSave, note, subjects, mode = "create" })
   };
 
   const onSubmit = async (data) => {
-    console.log('NoteModal - Submitting form with data:', data);
     try {
       await onSave(data);
-      console.log('NoteModal - Save successful, resetting form');
       form.reset();
       setImprovedContent("");
       setShowImprovedContent(false);
       onClose();
     } catch (error) {
-      console.error("NoteModal - Error saving note:", error);
+      console.error("DEBUG - NoteModal save error:", error);
       toast.error("Error al guardar la nota");
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog 
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          form.reset();
+          setImprovedContent("");
+          setShowImprovedContent(false);
+          onClose();
+        }
+      }}
+    >
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
