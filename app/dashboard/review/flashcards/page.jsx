@@ -55,6 +55,12 @@ const FlashcardsPage = () => {
     }
   }, [flashcards, sessionStartTime]);
 
+  useEffect(() => {
+    return () => {
+      resetSession();
+    };
+  }, []);
+
   const loadSubjectsAndNotes = async () => {
     try {
       const subjectsRef = ref(realtimeDb, 'subjects');
@@ -103,31 +109,28 @@ const FlashcardsPage = () => {
   };
 
   const handleStartFlashcards = async (selectedSubjects, selectedNotes) => {
-    setLoading(true);
+    resetSession();
+    
     try {
       const flashcardsData = await generateFlashcards(
         selectedSubjects,
         selectedNotes,
-        (progress) => setLoadingStatus(progress)
+        user.id
       );
 
-      const flashcardsArray = Array.isArray(flashcardsData.flashcards) 
-        ? flashcardsData.flashcards 
-        : [];
-
-      setFlashcards(flashcardsArray);
-      setCurrentIndex(0);
-      setIsFlipped(false);
-      updateSessionStats(flashcardsArray);
-      
-      const flashcardsRef = ref(realtimeDb, `users/${user.id}/flashcards`);
-      await set(flashcardsRef, flashcardsArray);
+      if (flashcardsData && flashcardsData.length > 0) {
+        setFlashcards(flashcardsData);
+        setSessionStats(prev => ({
+          ...prev,
+          total: flashcardsData.length
+        }));
+        setSessionStartTime(Date.now());
+      } else {
+        toast.error("No se encontraron apuntes para generar flashcards");
+      }
     } catch (error) {
       console.error("Error generating flashcards:", error);
       toast.error("Error al generar las flashcards");
-    } finally {
-      setLoading(false);
-      setLoadingStatus({ status: '', message: '' });
     }
   };
 
@@ -207,6 +210,20 @@ const FlashcardsPage = () => {
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
+  };
+
+  const resetSession = () => {
+    setFlashcards(null);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setSessionStats({
+      mastered: 0,
+      reviewing: 0,
+      total: 0
+    });
+    setShowSummary(false);
+    setSessionSummary(null);
+    setSessionStartTime(null);
   };
 
   if (loading) {
@@ -330,8 +347,7 @@ const FlashcardsPage = () => {
             >
               <Button
                 onClick={() => {
-                  setShowSummary(false);
-                  setFlashcards(null);
+                  resetSession();
                 }}
                 className="flex items-center gap-2"
               >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -13,6 +13,12 @@ const FlashcardSelector = ({ subjects, notes, onStart }) => {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [selectedNotes, setSelectedNotes] = useState([]);
   const [step, setStep] = useState('subjects'); // 'subjects' or 'notes'
+
+  useEffect(() => {
+    setSelectedSubjects([]);
+    setSelectedNotes([]);
+    setStep('subjects');
+  }, []);
 
   const handleSubjectToggle = (subject) => {
     setSelectedSubjects(current =>
@@ -35,6 +41,13 @@ const FlashcardSelector = ({ subjects, notes, onStart }) => {
   );
 
   const canProceed = step === 'subjects' ? selectedSubjects.length > 0 : selectedNotes.length > 0;
+
+  const handleStartSession = () => {
+    onStart(selectedSubjects, selectedNotes);
+    setSelectedSubjects([]);
+    setSelectedNotes([]);
+    setStep('subjects');
+  };
 
   return (
     <motion.div className="space-y-6">
@@ -180,22 +193,13 @@ const FlashcardSelector = ({ subjects, notes, onStart }) => {
           ) : (
             <div className="flex gap-2">
               <Button
-                onClick={() => onStart(selectedSubjects, selectedNotes)}
+                onClick={handleStartSession}
                 disabled={!canProceed}
                 className="bg-gradient-to-r from-blue-500 to-blue-600 text-white"
               >
                 Crear Flashcards
                 <HiOutlineLightBulb className="ml-2 h-4 w-4" />
               </Button>
-              <Link href="/dashboard/review/flashcards/progress">
-                <Button
-                  variant="outline"
-                  className="flex items-center gap-2"
-                >
-                  <HiOutlineTrendingUp className="w-5 h-5" />
-                  Ver Progreso
-                </Button>
-              </Link>
             </div>
           )}
         </div>
