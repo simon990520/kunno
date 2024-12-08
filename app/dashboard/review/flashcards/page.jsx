@@ -404,15 +404,14 @@ const FlashcardsPage = () => {
                 >
                   <Button
                     onClick={() => handleCardStatus('reviewing')}
-                    variant="outline"
-                    className="flex-1"
+                    className="flex-1 bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white hover:opacity-90"
                   >
                     Repasar Después
                     <HiOutlineRefresh className="w-4 h-4 ml-2" />
                   </Button>
                   <Button
                     onClick={() => handleCardStatus('mastered')}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600"
+                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white hover:opacity-90"
                   >
                     ¡Lo Domino!
                     <HiOutlineCheck className="w-4 h-4 ml-2" />

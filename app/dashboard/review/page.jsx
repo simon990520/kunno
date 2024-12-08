@@ -61,14 +61,25 @@ const ReviewPage = () => {
           <p className="text-gray-600 mb-4">
             Repasa con tarjetas de memoria interactivas.
           </p>
-          <Link href="/dashboard/review/flashcards">
-            <Button 
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:opacity-90"
-            >
-              Practicar con Flashcards
-              <HiOutlineChevronRight className="ml-2" />
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/dashboard/review/flashcards" className="flex-1">
+              <Button 
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:opacity-90"
+              >
+                Practicar con Flashcards
+                <HiOutlineChevronRight className="ml-2" />
+              </Button>
+            </Link>
+            <Link href="/dashboard/review/flashcards/progress">
+              <Button 
+                variant="outline"
+                size="icon"
+                className="border-blue-200 text-blue-600 hover:bg-blue-50 w-10 h-10"
+              >
+                <HiOutlineChartBar className="h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
         </Card>
       </div>
     </div>
