@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiCheck, HiX, HiOutlineChevronRight } from "react-icons/hi";
+import { HiCheck, HiX, HiOutlineChevronRight, HiOutlineFlag } from "react-icons/hi";
 
 const QuizQuestion = ({ 
   question, 
@@ -13,13 +13,16 @@ const QuizQuestion = ({
   currentQuestion, 
   totalQuestions,
   correctAnswers,
-  incorrectAnswers 
+  incorrectAnswers,
+  onComplete 
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [answered, setAnswered] = useState(false);
+
+  const isLastQuestion = currentQuestion === totalQuestions;
 
   const handleOptionClick = async (option) => {
     if (answered || isLoading) return; // Prevenir múltiples selecciones
@@ -40,11 +43,17 @@ const QuizQuestion = ({
 
   const handleNextQuestion = () => {
     onAnswer(isCorrect);
-    // Resetear estados para la siguiente pregunta
-    setSelectedAnswer(null);
-    setShowFeedback(false);
-    setIsCorrect(false);
-    setAnswered(false);
+    
+    if (isLastQuestion) {
+      // Si es la última pregunta, finalizamos el quiz
+      onComplete();
+    } else {
+      // Si no es la última, reseteamos los estados para la siguiente pregunta
+      setSelectedAnswer(null);
+      setShowFeedback(false);
+      setIsCorrect(false);
+      setAnswered(false);
+    }
   };
 
   const getOptionClassName = (option) => {
@@ -156,8 +165,17 @@ const QuizQuestion = ({
               onClick={handleNextQuestion}
               className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700"
             >
-              Siguiente Pregunta
-              <HiOutlineChevronRight className="ml-2 h-4 w-4" />
+              {isLastQuestion ? (
+                <>
+                  Finalizar Quiz
+                  <HiOutlineFlag className="ml-2 h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Siguiente Pregunta
+                  <HiOutlineChevronRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
           </motion.div>
         )}

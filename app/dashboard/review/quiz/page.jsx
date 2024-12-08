@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { ref, get } from "firebase/database";
+import { ref, get, set } from "firebase/database";
 import { realtimeDb } from "@/configs/firebaseConfig";
 import { toast } from "sonner";
 import { generateQuiz } from "@/services/quiz";
@@ -17,9 +17,16 @@ const QuizPage = () => {
   const [notes, setNotes] = useState([]);
   const [quiz, setQuiz] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [results, setResults] = useState({ correctAnswers: 0, incorrectAnswers: 0 });
+  const [results, setResults] = useState({ 
+    correctAnswers: 0, 
+    incorrectAnswers: 0,
+    startTime: null,
+    selectedSubjects: [],
+    selectedNotes: []
+  });
   const [loading, setLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState({ status: '', message: '' });
+  const [quizCompleted, setQuizCompleted] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -70,7 +77,14 @@ const QuizPage = () => {
       );
       setQuiz(quizData.quiz);
       setCurrentQuestionIndex(0);
-      setResults({ correctAnswers: 0, incorrectAnswers: 0 });
+      setResults({ 
+        correctAnswers: 0, 
+        incorrectAnswers: 0,
+        startTime: new Date().toISOString(),
+        selectedSubjects,
+        selectedNotes
+      });
+      setQuizCompleted(false);
     } catch (error) {
       console.error("Error generating quiz:", error);
       toast.error("Error al generar el quiz");
@@ -82,6 +96,7 @@ const QuizPage = () => {
 
   const handleAnswer = (isCorrect) => {
     setResults(prev => ({
+      ...prev,
       correctAnswers: prev.correctAnswers + (isCorrect ? 1 : 0),
       incorrectAnswers: prev.incorrectAnswers + (isCorrect ? 0 : 1)
     }));
@@ -93,10 +108,65 @@ const QuizPage = () => {
     }
   };
 
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
+  };
+
+  const saveQuizProgress = async () => {
+    if (!user) return;
+
+    try {
+      const endTime = new Date().toISOString();
+      const quizResult = {
+        ...results,
+        endTime,
+        totalQuestions: quiz.length,
+        score: (results.correctAnswers / quiz.length) * 100,
+        timestamp: endTime,
+      };
+
+      // Save to user's quiz history
+      const quizHistoryRef = ref(realtimeDb, `users/${user.id}/quizHistory/${Date.now()}`);
+      await set(quizHistoryRef, quizResult);
+
+      // Update user's overall progress
+      const userProgressRef = ref(realtimeDb, `users/${user.id}/progress`);
+      const progressSnapshot = await get(userProgressRef);
+      const currentProgress = progressSnapshot.exists() ? progressSnapshot.val() : {
+        totalQuizzes: 0,
+        totalCorrect: 0,
+        totalQuestions: 0,
+        averageScore: 0
+      };
+
+      const updatedProgress = {
+        totalQuizzes: currentProgress.totalQuizzes + 1,
+        totalCorrect: currentProgress.totalCorrect + results.correctAnswers,
+        totalQuestions: currentProgress.totalQuestions + quiz.length,
+        averageScore: ((currentProgress.averageScore * currentProgress.totalQuizzes) + quizResult.score) / (currentProgress.totalQuizzes + 1)
+      };
+
+      await set(userProgressRef, updatedProgress);
+      
+      return { quizResult, progress: updatedProgress };
+    } catch (error) {
+      console.error("Error saving quiz progress:", error);
+      toast.error("Error al guardar el progreso del quiz");
+      return null;
+    }
+  };
+
   const handleRetry = () => {
     setQuiz(null);
     setCurrentQuestionIndex(0);
-    setResults({ correctAnswers: 0, incorrectAnswers: 0 });
+    setResults({ 
+      correctAnswers: 0, 
+      incorrectAnswers: 0,
+      startTime: null,
+      selectedSubjects: [],
+      selectedNotes: []
+    });
+    setQuizCompleted(false);
   };
 
   if (loading) {
@@ -140,10 +210,15 @@ const QuizPage = () => {
     );
   }
 
-  if (currentQuestionIndex >= quiz.length) {
+  if (quizCompleted) {
     return (
       <div className="p-6">
-        <QuizSummary results={results} onRetry={handleRetry} />
+        <QuizSummary 
+          results={results} 
+          onRetry={handleRetry} 
+          saveProgress={saveQuizProgress}
+          totalQuestions={quiz.length}
+        />
       </div>
     );
   }
@@ -154,8 +229,9 @@ const QuizPage = () => {
         question={quiz[currentQuestionIndex]}
         onAnswer={(isCorrect) => {
           handleAnswer(isCorrect);
-          setTimeout(handleNextQuestion, 2000);
+          handleNextQuestion();
         }}
+        onComplete={handleQuizComplete}
         currentQuestion={currentQuestionIndex + 1}
         totalQuestions={quiz.length}
         correctAnswers={results.correctAnswers}

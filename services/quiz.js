@@ -1,90 +1,116 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { generateContent } from "@/configs/AiModel";
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
-
-export async function generateQuiz(subjects, notes, onProgress) {
+export const generateQuiz = async (selectedSubjects, selectedNotes, onProgress) => {
   try {
-    if (onProgress) onProgress({ status: 'starting', message: 'Iniciando generación del quiz...' });
+    onProgress({ status: 'starting', message: 'Iniciando generación del quiz...' });
     
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // Preparar el contenido para el modelo
+    const content = prepareContent(selectedSubjects, selectedNotes);
+    
+    onProgress({ status: 'preparing', message: 'Preparando el contenido...' });
+    
+    onProgress({ status: 'generating', message: 'Generando preguntas inteligentes...' });
+    
+    const prompt = `Actúa como un generador de quizzes y crea un quiz con 10 preguntas basado en este contenido: ${content}
 
-    if (onProgress) onProgress({ status: 'preparing', message: 'Preparando contenido...' });
+IMPORTANTE: Tu respuesta debe ser ÚNICAMENTE un objeto JSON válido con la siguiente estructura exacta, sin texto adicional antes o después:
 
-    const prompt = `Actúa como un creador de quizzes educativo avanzado. A partir de los siguientes datos:
-    - Materias seleccionadas: ${subjects.map(s => s.name).join(", ")}
-    - Apuntes relacionados: ${notes.map(n => n.title).join(", ")}
-    
-    Genera un quiz dinámico con las siguientes características:
-    - 10 preguntas (pueden ser selección múltiple, verdadero/falso o preguntas abiertas)
-    - Las preguntas deben abarcar un rango de dificultad de fácil a complejo
-    - Proporciona una explicación breve para cada respuesta correcta
-    - Las preguntas deben estar basadas en el contenido de los apuntes proporcionados
-    
-    Contenido de los apuntes:
-    ${notes.map(n => `${n.title}: ${n.content}`).join("\n\n")}
-    
-    Formato requerido para la salida (JSON):
+{
+  "quiz": [
     {
-      "quiz": [
-        {
-          "question": "Pregunta 1",
-          "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
-          "correct_answer": "Opción A",
-          "explanation": "Explicación de por qué esta es la respuesta correcta."
-        }
-      ]
-    }`;
+      "question": "Pregunta clara y concisa",
+      "options": [
+        "Primera opción",
+        "Segunda opción",
+        "Tercera opción",
+        "Cuarta opción"
+      ],
+      "correct_answer": "Opción correcta (debe ser exactamente igual a una de las opciones)",
+      "explanation": "Explicación breve de por qué esta es la respuesta correcta"
+    }
+  ]
+}
 
-    if (onProgress) onProgress({ status: 'generating', message: 'Generando preguntas...' });
-    
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-    
-    if (onProgress) onProgress({ status: 'processing', message: 'Procesando respuestas...' });
+Reglas:
+1. Devuelve SOLO el JSON, sin texto adicional
+2. Asegúrate que correct_answer sea EXACTAMENTE igual a una de las options
+3. Usa preguntas claras y concisas
+4. Incluye 4 opciones para cada pregunta
+5. Evita caracteres especiales o símbolos que puedan romper el JSON
+6. La explicación debe ser breve pero informativa`;
 
-    // Extraer el JSON de la respuesta
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error("No se pudo generar el quiz correctamente");
+    const text = await generateContent(prompt);
+    
+    onProgress({ status: 'processing', message: 'Procesando las respuestas...' });
+
+    // Buscar el JSON en la respuesta
+    let jsonStr = text;
+    
+    // Si hay texto adicional, intentar extraer solo el JSON
+    if (text.includes('{') && text.includes('}')) {
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}') + 1;
+      jsonStr = text.slice(start, end);
     }
 
-    // Limpiar el texto del JSON manteniendo caracteres especiales
-    let cleanJson = jsonMatch[0]
-      .replace(/[\n\r\t]/g, ' ') // Reemplazar saltos de línea y tabulaciones por espacios
-      .replace(/\s+/g, ' ') // Normalizar espacios
-      .trim();
-
+    // Intentar parsear el JSON
+    let parsedQuiz;
     try {
-      const quizData = JSON.parse(cleanJson);
-      
-      // Validar la estructura del quiz
-      if (!quizData.quiz || !Array.isArray(quizData.quiz)) {
-        throw new Error("El formato del quiz no es válido");
+      parsedQuiz = JSON.parse(jsonStr);
+    } catch (error) {
+      console.error('Error parsing JSON:', jsonStr);
+      throw new Error('El formato de la respuesta no es válido');
+    }
+
+    // Validar la estructura del quiz
+    if (!parsedQuiz.quiz || !Array.isArray(parsedQuiz.quiz)) {
+      throw new Error('Estructura del quiz inválida');
+    }
+
+    // Validar y limpiar cada pregunta
+    parsedQuiz.quiz = parsedQuiz.quiz.map(question => {
+      // Validar que todos los campos requeridos existen
+      if (!question.question || !question.options || !question.correct_answer || !question.explanation) {
+        throw new Error('Pregunta incompleta en el quiz');
       }
 
-      // Validar cada pregunta
-      quizData.quiz = quizData.quiz.map(q => {
-        if (!q.question || !Array.isArray(q.options) || !q.correct_answer || !q.explanation) {
-          throw new Error("Formato de pregunta inválido");
-        }
-        return {
-          question: q.question.trim(),
-          options: q.options.map(opt => opt.trim()),
-          correct_answer: q.correct_answer.trim(),
-          explanation: q.explanation.trim()
-        };
-      });
+      // Validar que hay exactamente 4 opciones
+      if (!Array.isArray(question.options) || question.options.length !== 4) {
+        throw new Error('Cada pregunta debe tener exactamente 4 opciones');
+      }
 
-      if (onProgress) onProgress({ status: 'completed', message: '¡Quiz generado exitosamente!' });
-      return quizData;
-    } catch (parseError) {
-      console.error("Error parsing quiz JSON:", parseError);
-      throw new Error("El formato del quiz generado no es válido");
-    }
+      // Validar que la respuesta correcta está en las opciones
+      if (!question.options.includes(question.correct_answer)) {
+        throw new Error('La respuesta correcta debe ser una de las opciones');
+      }
+
+      return {
+        question: String(question.question).trim(),
+        options: question.options.map(opt => String(opt).trim()),
+        correct_answer: String(question.correct_answer).trim(),
+        explanation: String(question.explanation).trim()
+      };
+    });
+
+    onProgress({ status: 'completed', message: '¡Quiz listo!' });
+    
+    return parsedQuiz;
   } catch (error) {
-    console.error("Error generating quiz:", error);
-    if (onProgress) onProgress({ status: 'error', message: error.message });
-    throw error;
+    console.error('Error generando el quiz:', error);
+    throw new Error('Error al generar el quiz. Por favor, intenta de nuevo.');
   }
+};
+
+function prepareContent(subjects, notes) {
+  // Combinar la información de las materias y notas seleccionadas
+  const content = subjects.map(subject => {
+    const subjectNotes = notes
+      .filter(note => note.subjectId === subject.id)
+      .map(note => note.content)
+      .join('\\n');
+    
+    return `${subject.name}:\\n${subjectNotes}`;
+  }).join('\\n\\n');
+
+  return content;
 }
