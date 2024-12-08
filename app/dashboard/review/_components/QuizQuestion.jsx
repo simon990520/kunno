@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiCheck, HiX } from "react-icons/hi";
+import { HiCheck, HiX, HiOutlineChevronRight } from "react-icons/hi";
 
 const QuizQuestion = ({ 
   question, 
@@ -17,6 +17,7 @@ const QuizQuestion = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const progress = ((currentQuestion) / totalQuestions) * 100;
 
   const handleOptionSelect = (option) => {
@@ -24,10 +25,16 @@ const QuizQuestion = ({
     setSelectedOption(option);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedOption || showFeedback) return;
+    setIsLoading(true);
+    
+    // Simular un pequeño delay para mostrar el preloader
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     const isCorrect = selectedOption === question.correct_answer;
     setShowFeedback(true);
+    setIsLoading(false);
     onAnswer(isCorrect);
   };
 
@@ -72,14 +79,20 @@ const QuizQuestion = ({
                     : ""
                 }`}
                 onClick={() => handleOptionSelect(option)}
+                disabled={showFeedback}
               >
-                {showFeedback && option === question.correct_answer && (
-                  <HiCheck className="mr-2 h-4 w-4 text-green-500" />
-                )}
-                {showFeedback && option === selectedOption && option !== question.correct_answer && (
-                  <HiX className="mr-2 h-4 w-4 text-red-500" />
-                )}
-                {option}
+                <div className="flex items-center w-full">
+                  {showFeedback && option === question.correct_answer && (
+                    <HiCheck className="mr-2 h-4 w-4 text-green-500" />
+                  )}
+                  {showFeedback && option === selectedOption && option !== question.correct_answer && (
+                    <HiX className="mr-2 h-4 w-4 text-red-500" />
+                  )}
+                  {!showFeedback && selectedOption === option && (
+                    <div className="mr-2 h-4 w-4 rounded-full border-2 border-orange-500" />
+                  )}
+                  {option}
+                </div>
               </Button>
             </motion.div>
           ))}
@@ -104,10 +117,22 @@ const QuizQuestion = ({
           {!showFeedback ? (
             <Button
               onClick={handleSubmit}
-              disabled={!selectedOption}
-              className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white"
+              disabled={!selectedOption || isLoading}
+              className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white min-w-[160px]"
             >
-              Verificar Respuesta
+              {isLoading ? (
+                <div className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Verificando...
+                </div>
+              ) : (
+                <>
+                  Verificar Respuesta
+                </>
+              )}
             </Button>
           ) : (
             <Button
@@ -115,6 +140,7 @@ const QuizQuestion = ({
               className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white"
             >
               Siguiente Pregunta
+              <HiOutlineChevronRight className="ml-2 h-4 w-4" />
             </Button>
           )}
         </div>

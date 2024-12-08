@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { get, ref } from "firebase/database";
+import { ref, get } from "firebase/database";
 import { realtimeDb } from "@/configs/firebaseConfig";
+import { toast } from "sonner";
 import { generateQuiz } from "@/services/quiz";
 import QuizSelector from "../_components/QuizSelector";
 import QuizQuestion from "../_components/QuizQuestion";
 import QuizSummary from "../_components/QuizSummary";
-import { toast } from "sonner";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 
 const QuizPage = () => {
   const [subjects, setSubjects] = useState([]);
@@ -17,6 +19,7 @@ const QuizPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [results, setResults] = useState({ correctAnswers: 0, incorrectAnswers: 0 });
   const [loading, setLoading] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState({ status: '', message: '' });
   const { user } = useUser();
 
   useEffect(() => {
@@ -36,10 +39,7 @@ const QuizPage = () => {
         const notesList = [];
 
         Object.entries(subjectsData).forEach(([id, data]) => {
-          // Procesar materia
           subjectsList.push({ id, ...data });
-
-          // Procesar notas de la materia
           if (data.notes) {
             Object.entries(data.notes).forEach(([noteId, noteData]) => {
               notesList.push({
@@ -63,7 +63,11 @@ const QuizPage = () => {
   const handleStartQuiz = async (selectedSubjects, selectedNotes) => {
     setLoading(true);
     try {
-      const quizData = await generateQuiz(selectedSubjects, selectedNotes);
+      const quizData = await generateQuiz(
+        selectedSubjects, 
+        selectedNotes,
+        (progress) => setLoadingStatus(progress)
+      );
       setQuiz(quizData.quiz);
       setCurrentQuestionIndex(0);
       setResults({ correctAnswers: 0, incorrectAnswers: 0 });
@@ -72,6 +76,7 @@ const QuizPage = () => {
       toast.error("Error al generar el quiz");
     } finally {
       setLoading(false);
+      setLoadingStatus({ status: '', message: '' });
     }
   };
 
@@ -93,6 +98,34 @@ const QuizPage = () => {
     setCurrentQuestionIndex(0);
     setResults({ correctAnswers: 0, incorrectAnswers: 0 });
   };
+
+  if (loading) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-bold mb-6">Quiz Dinámico</h1>
+        <Card className="p-6">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <div className="w-16 h-16 relative">
+              <div className="w-16 h-16 rounded-full border-4 border-orange-200 border-t-orange-500 animate-spin"></div>
+            </div>
+            <h2 className="text-lg font-medium">{loadingStatus.message}</h2>
+            <div className="w-full max-w-md">
+              <Progress 
+                value={
+                  loadingStatus.status === 'starting' ? 20 :
+                  loadingStatus.status === 'preparing' ? 40 :
+                  loadingStatus.status === 'generating' ? 60 :
+                  loadingStatus.status === 'processing' ? 80 :
+                  loadingStatus.status === 'completed' ? 100 : 0
+                } 
+                className="h-2"
+              />
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   if (!quiz) {
     return (

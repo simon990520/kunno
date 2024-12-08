@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
-import { HiOutlineBookOpen, HiOutlineDocumentText } from "react-icons/hi";
+import { HiOutlineBookOpen, HiOutlineDocumentText, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineLightBulb } from "react-icons/hi";
+import { motion } from "framer-motion";
 
 const QuizSelector = ({ subjects, notes, onStart }) => {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [selectedNotes, setSelectedNotes] = useState([]);
+  const [step, setStep] = useState('subjects'); // 'subjects' or 'notes'
 
   const handleSubjectToggle = (subject) => {
     setSelectedSubjects(current =>
@@ -27,76 +29,166 @@ const QuizSelector = ({ subjects, notes, onStart }) => {
     );
   };
 
-  const canStart = selectedSubjects.length > 0 && selectedNotes.length > 0;
+  const filteredNotes = notes.filter(note =>
+    selectedSubjects.some(subject => subject.id === note.subjectId)
+  );
+
+  const canProceed = step === 'subjects' ? selectedSubjects.length > 0 : selectedNotes.length > 0;
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Subjects Selection */}
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <HiOutlineBookOpen className="text-orange-500 text-xl" />
-            <h3 className="font-semibold">Selecciona las Materias</h3>
-          </div>
-          <ScrollArea className="h-[300px] pr-4">
-            <div className="space-y-3">
-              {subjects.map((subject) => (
-                <div key={subject.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`subject-${subject.id}`}
-                    checked={selectedSubjects.some(s => s.id === subject.id)}
-                    onCheckedChange={() => handleSubjectToggle(subject)}
-                  />
-                  <label
-                    htmlFor={`subject-${subject.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {subject.name}
-                  </label>
-                </div>
-              ))}
+    <motion.div className="space-y-6">
+      {/* Progress Steps */}
+      <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center">
+          <motion.div
+            animate={{
+              scale: step === 'subjects' ? 1.1 : 1,
+              opacity: step === 'subjects' ? 1 : 0.5
+            }}
+            className="flex flex-col items-center"
+          >
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              step === 'subjects' ? 'bg-orange-500 text-white' : 'bg-gray-200'
+            }`}>
+              1
             </div>
-          </ScrollArea>
-        </Card>
-
-        {/* Notes Selection */}
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <HiOutlineDocumentText className="text-orange-500 text-xl" />
-            <h3 className="font-semibold">Selecciona los Apuntes</h3>
-          </div>
-          <ScrollArea className="h-[300px] pr-4">
-            <div className="space-y-3">
-              {notes.map((note) => (
-                <div key={note.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`note-${note.id}`}
-                    checked={selectedNotes.some(n => n.id === note.id)}
-                    onCheckedChange={() => handleNoteToggle(note)}
-                  />
-                  <label
-                    htmlFor={`note-${note.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {note.title}
-                  </label>
-                </div>
-              ))}
+            <span className="text-sm mt-1">Materias</span>
+          </motion.div>
+          <div className={`w-20 h-1 mx-2 ${step === 'notes' ? 'bg-orange-500' : 'bg-gray-200'}`} />
+          <motion.div
+            animate={{
+              scale: step === 'notes' ? 1.1 : 1,
+              opacity: step === 'notes' ? 1 : 0.5
+            }}
+            className="flex flex-col items-center"
+          >
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              step === 'notes' ? 'bg-orange-500 text-white' : 'bg-gray-200'
+            }`}>
+              2
             </div>
-          </ScrollArea>
-        </Card>
+            <span className="text-sm mt-1">Apuntes</span>
+          </motion.div>
+        </div>
       </div>
 
-      <div className="flex justify-center">
-        <Button
-          onClick={() => onStart(selectedSubjects, selectedNotes)}
-          disabled={!canStart}
-          className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white"
+      {step === 'subjects' ? (
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 20 }}
         >
-          Comenzar Quiz
-        </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {subjects.map((subject) => (
+              <motion.div
+                key={subject.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card
+                  className={`p-4 cursor-pointer transition-all ${
+                    selectedSubjects.some(s => s.id === subject.id)
+                      ? 'border-orange-500 bg-orange-50'
+                      : 'hover:border-gray-300'
+                  }`}
+                  onClick={() => handleSubjectToggle(subject)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${
+                      selectedSubjects.some(s => s.id === subject.id)
+                        ? 'bg-orange-200'
+                        : 'bg-gray-100'
+                    }`}>
+                      <HiOutlineBookOpen className="h-5 w-5 text-orange-500" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{subject.name}</h3>
+                      <p className="text-sm text-gray-500">
+                        {notes.filter(n => n.subjectId === subject.id).length} apuntes
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredNotes.map((note) => (
+              <motion.div
+                key={note.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card
+                  className={`p-4 cursor-pointer transition-all ${
+                    selectedNotes.some(n => n.id === note.id)
+                      ? 'border-orange-500 bg-orange-50'
+                      : 'hover:border-gray-300'
+                  }`}
+                  onClick={() => handleNoteToggle(note)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${
+                      selectedNotes.some(n => n.id === note.id)
+                        ? 'bg-orange-200'
+                        : 'bg-gray-100'
+                    }`}>
+                      <HiOutlineDocumentText className="h-5 w-5 text-orange-500" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{note.title}</h3>
+                      <p className="text-sm text-gray-500">
+                        {subjects.find(s => s.id === note.subjectId)?.name}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      <div className="flex justify-between mt-8">
+        {step === 'notes' && (
+          <Button
+            variant="outline"
+            onClick={() => setStep('subjects')}
+          >
+            <HiOutlineChevronLeft className="mr-2 h-4 w-4" />
+            Volver a Materias
+          </Button>
+        )}
+        <div className="ml-auto">
+          {step === 'subjects' ? (
+            <Button
+              onClick={() => setStep('notes')}
+              disabled={!canProceed}
+              className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white"
+            >
+              Seleccionar Apuntes
+              <HiOutlineChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          ) : (
+            <Button
+              onClick={() => onStart(selectedSubjects, selectedNotes)}
+              disabled={!canProceed}
+              className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white"
+            >
+              Comenzar Quiz
+              <HiOutlineLightBulb className="ml-2 h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
