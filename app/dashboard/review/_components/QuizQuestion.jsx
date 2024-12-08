@@ -15,135 +15,152 @@ const QuizQuestion = ({
   correctAnswers,
   incorrectAnswers 
 }) => {
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const progress = ((currentQuestion) / totalQuestions) * 100;
+  const [answered, setAnswered] = useState(false);
 
-  const handleOptionSelect = (option) => {
-    if (showFeedback) return;
-    setSelectedOption(option);
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedOption || showFeedback) return;
+  const handleOptionClick = async (option) => {
+    if (answered || isLoading) return; // Prevenir múltiples selecciones
+    
     setIsLoading(true);
+    setSelectedAnswer(option);
     
-    // Simular un pequeño delay para mostrar el preloader
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const correct = option === question.correct_answer;
+    setIsCorrect(correct);
     
-    const isCorrect = selectedOption === question.correct_answer;
+    // Pequeña pausa para mostrar el loading
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     setShowFeedback(true);
+    setAnswered(true);
     setIsLoading(false);
-    onAnswer(isCorrect);
   };
 
-  const handleNext = () => {
-    setSelectedOption(null);
+  const handleNextQuestion = () => {
+    onAnswer(isCorrect);
+    // Resetear estados para la siguiente pregunta
+    setSelectedAnswer(null);
     setShowFeedback(false);
+    setIsCorrect(false);
+    setAnswered(false);
+  };
+
+  const getOptionClassName = (option) => {
+    const baseClass = "p-4 border rounded-lg transition-colors";
+    
+    if (!showFeedback) {
+      return `${baseClass} ${!answered ? 'hover:bg-gray-50 cursor-pointer' : ''}`;
+    }
+
+    if (option === selectedAnswer) {
+      return `${baseClass} ${
+        option === question.correct_answer 
+          ? 'bg-green-100 border-green-500' 
+          : 'bg-red-100 border-red-500'
+      }`;
+    }
+
+    if (option === question.correct_answer && showFeedback) {
+      return `${baseClass} bg-green-100 border-green-500`;
+    }
+
+    return baseClass;
   };
 
   return (
-    <div className="space-y-6">
-      {/* Progress Bar */}
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm text-gray-500">
-          <span>Pregunta {currentQuestion} de {totalQuestions}</span>
-          <span>{correctAnswers} correctas · {incorrectAnswers} incorrectas</span>
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-xl font-semibold">
+            Pregunta {currentQuestion} de {totalQuestions}
+          </h2>
+          <div className="flex items-center space-x-4">
+            <span className="flex items-center text-green-600">
+              <HiCheck className="w-5 h-5 mr-1" />
+              {correctAnswers}
+            </span>
+            <span className="flex items-center text-red-600">
+              <HiX className="w-5 h-5 mr-1" />
+              {incorrectAnswers}
+            </span>
+          </div>
         </div>
-        <Progress value={progress} className="h-2" />
+        <Progress 
+          value={(currentQuestion / totalQuestions) * 100} 
+          className="h-2"
+        />
       </div>
 
-      {/* Question Card */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">{question.question}</h3>
+        <h3 className="text-lg font-medium mb-6">{question.question}</h3>
         
-        <div className="space-y-3">
+        <div className="space-y-4">
           {question.options.map((option, index) => (
             <motion.div
               key={index}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onClick={() => !answered && handleOptionClick(option)}
+              className={getOptionClassName(option)}
             >
-              <Button
-                variant="outline"
-                className={`w-full justify-start text-left ${
-                  selectedOption === option
-                    ? "border-orange-500"
-                    : ""
-                } ${
-                  showFeedback && option === question.correct_answer
-                    ? "bg-green-50 border-green-500 text-green-700"
-                    : showFeedback && option === selectedOption
-                    ? "bg-red-50 border-red-500 text-red-700"
-                    : ""
-                }`}
-                onClick={() => handleOptionSelect(option)}
-                disabled={showFeedback}
-              >
-                <div className="flex items-center w-full">
-                  {showFeedback && option === question.correct_answer && (
-                    <HiCheck className="mr-2 h-4 w-4 text-green-500" />
-                  )}
-                  {showFeedback && option === selectedOption && option !== question.correct_answer && (
-                    <HiX className="mr-2 h-4 w-4 text-red-500" />
-                  )}
-                  {!showFeedback && selectedOption === option && (
-                    <div className="mr-2 h-4 w-4 rounded-full border-2 border-orange-500" />
-                  )}
-                  {option}
+              {option}
+              {isLoading && selectedAnswer === option && (
+                <div className="float-right">
+                  <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
-              </Button>
+              )}
+              {showFeedback && selectedAnswer === option && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="float-right"
+                >
+                  {option === question.correct_answer ? (
+                    <HiCheck className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <HiX className="w-5 h-5 text-red-500" />
+                  )}
+                </motion.div>
+              )}
             </motion.div>
           ))}
         </div>
 
-        {/* Feedback Section */}
-        <AnimatePresence>
-          {showFeedback && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="mt-4 p-4 rounded-lg bg-gray-50"
-            >
-              <p className="text-sm text-gray-600">{question.explanation}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {showFeedback && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mt-6 p-4 rounded-lg ${
+              isCorrect ? "bg-green-50" : "bg-red-50"
+            }`}
+          >
+            <p className={`font-medium ${
+              isCorrect ? "text-green-800" : "text-red-800"
+            }`}>
+              {isCorrect ? "¡Correcto!" : "Incorrecto"}
+            </p>
+            <p className="mt-2 text-gray-600">{question.explanation}</p>
+          </motion.div>
+        )}
 
-        {/* Action Buttons */}
-        <div className="mt-6 flex justify-end gap-3">
-          {!showFeedback ? (
+        {showFeedback && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-6 flex justify-end"
+          >
             <Button
-              onClick={handleSubmit}
-              disabled={!selectedOption || isLoading}
-              className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white min-w-[160px]"
-            >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Verificando...
-                </div>
-              ) : (
-                <>
-                  Verificar Respuesta
-                </>
-              )}
-            </Button>
-          ) : (
-            <Button
-              onClick={handleNext}
-              className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white"
+              onClick={handleNextQuestion}
+              className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700"
             >
               Siguiente Pregunta
               <HiOutlineChevronRight className="ml-2 h-4 w-4" />
             </Button>
-          )}
-        </div>
+          </motion.div>
+        )}
       </Card>
     </div>
   );
