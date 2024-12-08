@@ -6,37 +6,22 @@ import { ref, get } from "firebase/database";
 import { realtimeDb } from "@/configs/firebaseConfig";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-} from 'chart.js';
-import { Bar, Pie } from 'react-chartjs-2';
-import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
   HiOutlineTrendingUp,
   HiOutlineAcademicCap,
   HiOutlineClock,
-  HiOutlineChartBar
+  HiOutlineChartBar,
+  HiOutlineCheck,
+  HiOutlineCollection,
+  HiOutlineChevronLeft
 } from "react-icons/hi";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
+import { motion } from "framer-motion";
 
 const FlashcardsProgressPage = () => {
-  const [flashcards, setFlashcards] = useState([]);
+  const [progress, setProgress] = useState(null);
+  const [flashcardHistory, setFlashcardHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
 
@@ -48,97 +33,49 @@ const FlashcardsProgressPage = () => {
 
   const loadProgress = async () => {
     try {
-      const flashcardsRef = ref(realtimeDb, `users/${user.id}/flashcards`);
-      const snapshot = await get(flashcardsRef);
+      // Cargar progreso general
+      const progressRef = ref(realtimeDb, `users/${user.id}/flashcardsProgress`);
+      const progressSnapshot = await get(progressRef);
       
-      if (snapshot.exists()) {
-        setFlashcards(Object.values(snapshot.val()));
+      // Cargar historial de sesiones
+      const historyRef = ref(realtimeDb, `users/${user.id}/flashcardSessions`);
+      const historySnapshot = await get(historyRef);
+      
+      if (progressSnapshot.exists()) {
+        setProgress(progressSnapshot.val());
+      }
+      
+      if (historySnapshot.exists()) {
+        const historyData = historySnapshot.val();
+        
+        const processedHistory = Object.entries(historyData)
+          .map(([key, data]) => ({
+            id: key,
+            ...data,
+            dateObj: new Date(data.timestamp || data.date),
+            displayDate: new Date(data.timestamp || data.date).toLocaleDateString('es-ES', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          }))
+          .sort((a, b) => b.dateObj - a.dateObj)
+          .filter((session, index, self) => 
+            index === self.findIndex((s) => 
+              Math.abs(s.dateObj - session.dateObj) < 1000
+            )
+          )
+          .map(({ dateObj, ...session }) => session);
+
+        setFlashcardHistory(processedHistory);
       }
     } catch (error) {
-      console.error("Error loading flashcards progress:", error);
+      console.error("Error loading progress:", error);
     } finally {
       setLoading(false);
     }
-  };
-
-  const calculateStats = () => {
-    if (flashcards.length === 0) return {
-      total: 0,
-      mastered: 0,
-      reviewing: 0,
-      new: 0,
-      masteredPercentage: 0,
-      reviewingPercentage: 0,
-      newPercentage: 0,
-      byTopic: {},
-      byDifficulty: {
-        basic: 0,
-        intermediate: 0,
-        advanced: 0
-      }
-    };
-
-    const stats = flashcards.reduce((acc, card) => {
-      // Conteo por estado
-      acc[card.status] = (acc[card.status] || 0) + 1;
-      
-      // Conteo por tema
-      acc.byTopic[card.topic] = (acc.byTopic[card.topic] || 0) + 1;
-      
-      // Conteo por dificultad
-      acc.byDifficulty[card.difficulty] = (acc.byDifficulty[card.difficulty] || 0) + 1;
-      
-      return acc;
-    }, { byTopic: {}, byDifficulty: { basic: 0, intermediate: 0, advanced: 0 } });
-
-    const total = flashcards.length;
-
-    return {
-      total,
-      mastered: stats.mastered || 0,
-      reviewing: stats.reviewing || 0,
-      new: stats.new || 0,
-      masteredPercentage: ((stats.mastered || 0) / total) * 100,
-      reviewingPercentage: ((stats.reviewing || 0) / total) * 100,
-      newPercentage: ((stats.new || 0) / total) * 100,
-      byTopic: stats.byTopic,
-      byDifficulty: stats.byDifficulty
-    };
-  };
-
-  const stats = calculateStats();
-
-  const statusChartData = {
-    labels: ['Dominadas', 'En Revisión', 'Nuevas'],
-    datasets: [
-      {
-        data: [stats.mastered, stats.reviewing, stats.new],
-        backgroundColor: [
-          'rgba(34, 197, 94, 0.8)',
-          'rgba(249, 115, 22, 0.8)',
-          'rgba(59, 130, 246, 0.8)'
-        ],
-        borderColor: [
-          'rgba(34, 197, 94, 1)',
-          'rgba(249, 115, 22, 1)',
-          'rgba(59, 130, 246, 1)'
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const topicsChartData = {
-    labels: Object.keys(stats.byTopic),
-    datasets: [
-      {
-        label: 'Flashcards por Tema',
-        data: Object.values(stats.byTopic),
-        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-        borderColor: 'rgba(59, 130, 246, 1)',
-        borderWidth: 1,
-      },
-    ],
   };
 
   if (loading) {
@@ -152,27 +89,54 @@ const FlashcardsProgressPage = () => {
     );
   }
 
+  const calculateStats = () => {
+    if (!progress) return {
+      totalSessions: 0,
+      totalCards: 0,
+      masteredCards: 0,
+      averageCompletionRate: 0
+    };
+    
+    return {
+      totalSessions: progress.totalSessions || 0,
+      totalCards: progress.totalCards || 0,
+      masteredCards: progress.masteredCards || 0,
+      averageCompletionRate: progress.averageCompletionRate || 0
+    };
+  };
+
+  const stats = calculateStats();
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Progreso de Flashcards</h1>
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/dashboard/review/flashcards">
+          <Button variant="outline" size="sm" className="gap-2">
+            <HiOutlineChevronLeft className="w-4 h-4" />
+            Volver
+          </Button>
+        </Link>
+        <h1 className="text-2xl font-bold">Progreso de Flashcards</h1>
+      </div>
       
       {/* Estadísticas Generales */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
           <Card className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <HiOutlineChartBar className="h-6 w-6 text-blue-600" />
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 bg-green-100 rounded-lg">
+                <HiOutlineTrendingUp className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <h3 className="text-sm text-gray-500">Total Flashcards</h3>
-                <p className="text-2xl font-bold">{stats.total}</p>
+                <h3 className="text-sm text-gray-500">Tasa de Éxito</h3>
+                <p className="text-2xl font-bold">{stats.averageCompletionRate.toFixed(1)}%</p>
               </div>
             </div>
+            <Progress value={stats.averageCompletionRate} className="h-2" />
           </Card>
         </motion.div>
 
@@ -183,15 +147,14 @@ const FlashcardsProgressPage = () => {
         >
           <Card className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <HiOutlineTrendingUp className="h-6 w-6 text-green-600" />
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <HiOutlineCollection className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-sm text-gray-500">Dominadas</h3>
-                <p className="text-2xl font-bold">{stats.mastered}</p>
+                <h3 className="text-sm text-gray-500">Sesiones Completadas</h3>
+                <p className="text-2xl font-bold">{stats.totalSessions}</p>
               </div>
             </div>
-            <Progress value={stats.masteredPercentage} className="mt-4 h-2" />
           </Card>
         </motion.div>
 
@@ -202,95 +165,56 @@ const FlashcardsProgressPage = () => {
         >
           <Card className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <HiOutlineClock className="h-6 w-6 text-orange-600" />
-              </div>
-              <div>
-                <h3 className="text-sm text-gray-500">En Revisión</h3>
-                <p className="text-2xl font-bold">{stats.reviewing}</p>
-              </div>
-            </div>
-            <Progress value={stats.reviewingPercentage} className="mt-4 h-2" />
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="p-6">
-            <div className="flex items-center gap-4">
               <div className="p-3 bg-purple-100 rounded-lg">
-                <HiOutlineAcademicCap className="h-6 w-6 text-purple-600" />
+                <HiOutlineChartBar className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <h3 className="text-sm text-gray-500">Nuevas</h3>
-                <p className="text-2xl font-bold">{stats.new}</p>
+                <h3 className="text-sm text-gray-500">Tarjetas Dominadas</h3>
+                <p className="text-2xl font-bold">{stats.masteredCards}</p>
               </div>
             </div>
-            <Progress value={stats.newPercentage} className="mt-4 h-2" />
           </Card>
         </motion.div>
       </div>
 
-      {/* Gráficas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Estado de Flashcards</h3>
-            <div className="h-[300px] flex items-center justify-center">
-              <Pie
-                data={statusChartData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      position: 'bottom',
-                    }
-                  }
-                }}
-              />
-            </div>
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Flashcards por Tema</h3>
-            <div className="h-[300px]">
-              <Bar
-                data={topicsChartData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      display: false
-                    }
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      ticks: {
-                        stepSize: 1
-                      }
-                    }
-                  }
-                }}
-              />
-            </div>
-          </Card>
-        </motion.div>
+      {/* Historial de Sesiones */}
+      <h2 className="text-xl font-semibold mb-4">Historial de Sesiones</h2>
+      <div className="space-y-4">
+        {flashcardHistory.map((session) => (
+          <motion.div
+            key={session.id}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="group"
+          >
+            <Card className="p-6 hover:shadow-lg transition-all">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <HiOutlineClock className="text-gray-400" />
+                    <span className="text-sm text-gray-500">{session.displayDate}</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center text-green-600">
+                      <HiOutlineCheck className="mr-1" />
+                      {session.mastered} dominadas
+                    </div>
+                    <div>
+                      {session.total} tarjetas totales
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <div className="text-sm text-gray-500">Tasa de Éxito</div>
+                    <div className="text-xl font-bold">{session.completionRate?.toFixed(1)}%</div>
+                  </div>
+                  <Progress value={session.completionRate} className="w-32 h-2" />
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
