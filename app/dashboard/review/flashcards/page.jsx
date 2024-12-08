@@ -17,9 +17,12 @@ import {
   HiOutlineRefresh,
   HiOutlineChevronLeft,
   HiOutlineChevronRight,
-  HiOutlineBookOpen
+  HiOutlineBookOpen,
+  HiOutlineTrendingUp,
+  HiOutlineChartBar
 } from "react-icons/hi";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const FlashcardsPage = () => {
   const [subjects, setSubjects] = useState([]);
@@ -34,6 +37,9 @@ const FlashcardsPage = () => {
     reviewing: 0,
     total: 0
   });
+  const [sessionStartTime, setSessionStartTime] = useState(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [sessionSummary, setSessionSummary] = useState(null);
   const { user } = useUser();
 
   useEffect(() => {
@@ -42,6 +48,12 @@ const FlashcardsPage = () => {
       loadSavedFlashcards();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (flashcards && flashcards.length > 0 && !sessionStartTime) {
+      setSessionStartTime(Date.now());
+    }
+  }, [flashcards, sessionStartTime]);
 
   const loadSubjectsAndNotes = async () => {
     try {
@@ -145,10 +157,38 @@ const FlashcardsPage = () => {
     setFlashcards(updatedFlashcards);
     updateSessionStats(updatedFlashcards);
 
+    // Si es la última tarjeta, guardar progreso y mostrar resumen
+    if (currentIndex === flashcards.length - 1) {
+      const timeSpent = Math.floor((Date.now() - sessionStartTime) / 1000);
+      const averageTime = Math.floor(timeSpent / sessionStats.total);
+      const completionRate = (sessionStats.mastered / sessionStats.total) * 100;
+
+      const summary = {
+        timeSpent,
+        averageTime,
+        completionRate,
+        mastered: sessionStats.mastered,
+        reviewing: sessionStats.reviewing,
+        total: sessionStats.total
+      };
+
+      const timestamp = Date.now();
+      const progressRef = ref(realtimeDb, `users/${user.id}/progress/${timestamp}`);
+      await set(progressRef, {
+        timestamp,
+        date: new Date().toISOString(),
+        ...summary
+      });
+
+      setSessionSummary(summary);
+      setShowSummary(true);
+    } else {
+      handleNext();
+    }
+
+    // Guardar en Firebase
     const flashcardsRef = ref(realtimeDb, `users/${user.id}/flashcards`);
     await set(flashcardsRef, updatedFlashcards);
-
-    handleNext();
   };
 
   const handleNext = () => {
@@ -193,6 +233,123 @@ const FlashcardsPage = () => {
             </div>
           </div>
         </Card>
+      </div>
+    );
+  }
+
+  if (showSummary) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4"
+        >
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6 text-center">¡Sesión Completada!</h2>
+            
+            <div className="grid grid-cols-2 gap-6 mb-8">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Card className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-green-100 rounded-lg">
+                      <HiOutlineTrendingUp className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500">Tasa de Éxito</div>
+                      <div className="text-2xl font-bold text-green-600">
+                        {Math.round(sessionSummary.completionRate)}%
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Card className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-blue-100 rounded-lg">
+                      <HiOutlineClock className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500">Tiempo Total</div>
+                      <div className="text-2xl font-bold">
+                        {Math.floor(sessionSummary.timeSpent / 60)}:{String(sessionSummary.timeSpent % 60).padStart(2, '0')}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="mb-8"
+            >
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Resumen de Tarjetas</h3>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <div className="text-sm text-gray-500">Dominadas</div>
+                    <div className="text-xl font-bold text-green-600">
+                      {sessionSummary.mastered}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-500">En Revisión</div>
+                    <div className="text-xl font-bold text-orange-600">
+                      {sessionSummary.reviewing}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-500">Total</div>
+                    <div className="text-xl font-bold">
+                      {sessionSummary.total}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex justify-center gap-4"
+            >
+              <Button
+                onClick={() => {
+                  setShowSummary(false);
+                  setFlashcards(null);
+                }}
+                className="flex items-center gap-2"
+              >
+                <HiOutlineRefresh className="w-5 h-5" />
+                Nueva Sesión
+              </Button>
+              <Link href="/dashboard/review/flashcards/progress">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <HiOutlineChartBar className="w-5 h-5" />
+                  Ver Progreso Completo
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     );
   }

@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
-import { HiOutlineBookOpen, HiOutlineDocumentText, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineLightBulb } from "react-icons/hi";
+import { HiOutlineBookOpen, HiOutlineDocumentText, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineLightBulb, HiOutlineTrendingUp } from "react-icons/hi";
 import { motion } from "framer-motion";
+import Link from 'next/link';
 
 const FlashcardSelector = ({ subjects, notes, onStart }) => {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
@@ -177,14 +178,25 @@ const FlashcardSelector = ({ subjects, notes, onStart }) => {
               <HiOutlineChevronRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
-            <Button
-              onClick={() => onStart(selectedSubjects, selectedNotes)}
-              disabled={!canProceed}
-              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-            >
-              Crear Flashcards
-              <HiOutlineLightBulb className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => onStart(selectedSubjects, selectedNotes)}
+                disabled={!canProceed}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+              >
+                Crear Flashcards
+                <HiOutlineLightBulb className="ml-2 h-4 w-4" />
+              </Button>
+              <Link href="/dashboard/review/flashcards/progress">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <HiOutlineTrendingUp className="w-5 h-5" />
+                  Ver Progreso
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
       </div>
