@@ -4099,12 +4099,15 @@
           "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
         },
         "1dbc572f-d1cb-46ed-9ff8-aec3fc576471": {
-          "content": "Platon era un filosofo griego etc.",
+          "content": "Platon era un filosofo griego etc",
           "createdAt": "2024-12-07T01:32:50.713Z",
           "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
           "id": "1dbc572f-d1cb-46ed-9ff8-aec3fc576471",
+          "subject": "Filozofia",
+          "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
           "title": "Platon",
-          "updatedAt": "2024-12-07T01:56:25.389Z"
+          "updatedAt": "2024-12-07T20:44:54.868Z",
+          "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
         }
       },
       "updatedAt": "2024-12-07T01:56:25.389Z"
@@ -4115,6 +4118,14 @@
       "description": "La magia de los numeros",
       "name": "Matematicas",
       "notes": {
+        "434fd8e1-691d-477f-aec4-d948745a3083": {
+          "content": "## 1. Contenido Principal (mejorado y expandido)\n\n**Ecuaciones Lineales**\n\nUna ecuación lineal es una ecuación que puede expresarse en la forma:\n\n```\nax + b = 0\n```\n\nDonde:\n\n* `a` es el coeficiente de la variable `x`\n* `b` es la constante\n\n**Forma General de una Ecuación Lineal**\n\nLa forma general de una ecuación lineal es:\n\n```\ny = mx + c\n```\n\nDonde:\n\n* `y` es la variable dependiente\n* `x` es la variable independiente\n* `m` es la pendiente de la gráfica de la ecuación\n* `c` es el intercepto con el eje `y` de la gráfica\n\n**Pendiente e Intercepto**\n\n* La **pendiente** de una línea recta es la medida de su inclinación y se calcula mediante la siguiente fórmula:\n\n```\nm = (y2 - y1) / (x2 - x1)\n```\n\nDonde `(x1, y1)` y `(x2, y2)` son dos puntos de la línea.\n\n* El **intercepto** con el eje `y` de una línea recta es el valor de `y` cuando `x` es igual a cero. Se calcula sustituyendo `x = 0` en la ecuación de la línea:\n\n```\nc = y - mx\n```\n\n**Resolución de Ecuaciones Lineales**\n\nHay varios métodos para resolver ecuaciones lineales, entre ellos:\n\n* **Igualación a cero:** Restar `b` de ambos lados de la ecuación para obtener `ax = -b`. A continuación, dividir ambos lados por `a` para obtener el valor de `x`.\n* **Forma de pendiente-intercepto:** Si la ecuación está en forma de pendiente-intercepto, restar `mx` de ambos lados para obtener `y = c`.\n* **Sustitución:** Sustituir el valor de una variable en otra ecuación para resolver la otra variable.\n\n**Tipos de Ecuaciones Lineales**\n\nExisten diferentes tipos de ecuaciones lineales, como:\n\n* **Ecuaciones consistentes:** Tienen al menos una solución.\n* **Ecuaciones inconsistentes:** No tienen solución.\n* **Ecuaciones dependientes:** Tienen infinitas soluciones.\n\n## 2. Ejemplos Prácticos\n\n**Ejemplo 1:**\n\nResolver la ecuación lineal `2x - 5 = 11`.\n\n**Solución:**\n\n* Sumar 5 a ambos lados: `2x = 16`\n* Dividir ambos lados por 2: `x = 8`\n\n**Ejemplo 2:**\n\nDeterminar la pendiente y el intercepto de la línea recta representada por la ecuación `y = -3x + 2`.\n\n**Solución:**\n\n* Pendiente: `m = -3`\n* Intercepto: `c = 2`\n\n**Ejemplo 3:**\n\nResolver el sistema de ecuaciones lineales:\n\n```\nx + y = 5\nx - y = 1\n```\n\n**Solución:**\n\n* Sumar las dos ecuaciones para eliminar `y`: `2x = 6`\n* Dividir ambos lados por 2: `x = 3`\n* Sustituir `x = 3` en cualquiera de las ecuaciones para encontrar `y`: `y = 2`\n\n## 3. Puntos Clave a Recordar\n\n* Una ecuación lineal es una ecuación que puede expresarse en forma `ax + b = 0`.\n* La forma general de una ecuación lineal es `y = mx + c`, donde `m` es la pendiente y `c` es el intercepto.\n* La pendiente de una línea recta es la medida de su inclinación y el intercepto es el valor de `y` cuando `x` es igual a cero.\n* Existen diferentes métodos para resolver ecuaciones lineales, como igualación a cero, forma de pendiente-intercepto y sustitución.\n* Los tipos de ecuaciones lineales incluyen ecuaciones consistentes, inconsistentes y dependientes.\n\n## 4. Referencias o Recursos Adicionales\n\n* [Ecuaciones Lineales](https://www.khanacademy.org/math/algebra/x2eef969c74e0d802:linear-equations/x2eef969c74e0d802:intro-to-linear-equations/v/intro-to-linear-equations)\n* [Ecuaciones Lineales - Guía Completa](https://www.varsitytutors.com/linear-equations)",
+          "createdAt": "2024-12-07T20:48:04.792Z",
+          "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+          "id": "434fd8e1-691d-477f-aec4-d948745a3083",
+          "title": "ecuaciones lineales",
+          "updatedAt": "2024-12-07T20:48:04.792Z"
+        },
         "a4f44535-780e-48c1-bafa-379e37f7f122": {
           "content": "Las operaciones son la suma resta multiplicacion y divicion, existen mas pero no son las simples",
           "createdAt": "2024-12-07T01:31:22.133Z",
@@ -4132,7 +4143,863 @@
           "updatedAt": "2024-12-07T01:30:40.978Z"
         }
       },
-      "updatedAt": "2024-12-07T01:31:22.133Z"
+      "updatedAt": "2024-12-07T20:48:04.792Z"
+    }
+  },
+  "users": {
+    "user_2pDksB8JmmBe3y5JZFSR1sStstt": {
+      "flashcardSessions": {
+        "1733683069950": {
+          "flashcards": [
+            {
+              "back": "Conjunto de números que incluye los números racionales (que se pueden expresar como una fracción de dos números enteros) y los números irracionales (no periódicos y no terminables). Por ejemplo, el número pi (3,14...) es un número irracional.",
+              "difficulty": "basic",
+              "front": "Números reales",
+              "id": "m4fy4y66hdo8jjhouwj",
+              "lastReviewed": 1733683074064,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Número entero que no tiene valor. Es el punto de referencia de la recta numérica y separa los números positivos de los negativos.",
+              "difficulty": "basic",
+              "front": "0 (cero)",
+              "id": "m4fy4y6603bwolzsdd9b",
+              "lastReviewed": 1733683075720,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Dígitos del 0 al 9 utilizados para representar números en el sistema numérico decimal. Por ejemplo, el número 123 está formado por los dígitos 1, 2 y 3.",
+              "difficulty": "basic",
+              "front": "Dígitos",
+              "id": "m4fy4y66xiw69mop0qh",
+              "lastReviewed": 1733683077008,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Números que se pueden expresar como una fracción de dos números enteros, como 1/2, -3/4 o 5,75. Por ejemplo, el número 0,5 es un número racional que se puede expresar como 1/2.",
+              "difficulty": "basic",
+              "front": "Números racionales",
+              "id": "m4fy4y660rgg49p2fiop",
+              "lastReviewed": 1733683078312,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Números que no se pueden expresar como una fracción de dos números enteros, como pi (3,14...), la raíz cuadrada de 2 o e (2,71...). Por ejemplo, el número pi es un número irracional que no se puede escribir como una fracción finita.",
+              "difficulty": "intermediate",
+              "front": "Números irracionales",
+              "id": "m4fy4y66xzkfy0f0mtb",
+              "lastReviewed": 1733683080192,
+              "reviewCount": 1,
+              "status": "reviewing",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Conjunto que incluye todos los números reales, tanto racionales como irracionales. Es un conjunto infinito e incontable.",
+              "difficulty": "intermediate",
+              "front": "Conjunto de números reales",
+              "id": "m4fy4y66ges2gjuv75",
+              "lastReviewed": 1733683081528,
+              "reviewCount": 1,
+              "status": "reviewing",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Representación gráfica de los números reales como puntos a lo largo de una línea. Los números positivos se encuentran a la derecha del cero y los negativos a la izquierda.",
+              "difficulty": "basic",
+              "front": "Recta numérica",
+              "id": "m4fy4y66ch624vcp5kh",
+              "lastReviewed": 1733683082976,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Los números reales se pueden ordenar desde el menor hasta el mayor en la recta numérica. Por ejemplo, -5 < 0 < 2 < 5.",
+              "difficulty": "basic",
+              "front": "Orden de los números reales",
+              "id": "m4fy4y66tpi94m7zmg",
+              "lastReviewed": 1733683084953,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Los números reales se pueden sumar, restar, multiplicar y dividir siguiendo las mismas reglas que los números enteros. Por ejemplo, 3 + 5 = 8, 10 - 2 = 8 y 4 x 3 = 12.",
+              "difficulty": "basic",
+              "front": "Operaciones con números reales",
+              "id": "m4fy4y66xksvtifs0ir",
+              "lastReviewed": 1733683086696,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Los números reales tienen varias propiedades, como conmutatividad, asociatividad y distributividad. Por ejemplo, la suma y la multiplicación son conmutativas, lo que significa que el orden de los números no importa.",
+              "difficulty": "intermediate",
+              "front": "Propiedades de los números reales",
+              "id": "m4fy4y66yslgppceyge",
+              "lastReviewed": 1733683088584,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Números reales",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            }
+          ],
+          "lastUpdated": 1733683088585,
+          "stats": {
+            "completed": 10,
+            "mastered": 8,
+            "reviewing": 2,
+            "total": 10
+          }
+        },
+        "1733683219264": {
+          "flashcards": [
+            {
+              "back": "Filósofo griego que creía en la existencia de un mundo de Formas perfectas e inmutables. Su discípulo más famoso fue Aristóteles. (Intermedio)",
+              "difficulty": "intermediate",
+              "front": "Platón",
+              "id": "m4fy85ds1db5o2rxjh",
+              "lastReviewed": 1733683223412,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Entidades abstractas e inmutables que representan la verdadera realidad, según Platón. Son los modelos a partir de los cuales se crean todas las cosas físicas. (Intermedio)",
+              "difficulty": "intermediate",
+              "front": "Formas platónicas",
+              "id": "m4fy85dsa1tfn5xqjv",
+              "lastReviewed": 1733683224916,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Sostiene que el conocimiento verdadero no se deriva de la experiencia sensorial, sino de la contemplación de las Formas. (Intermedio)",
+              "difficulty": "intermediate",
+              "front": "Teoría de las ideas de Platón",
+              "id": "m4fy85dsulpnitl109",
+              "lastReviewed": 1733683226172,
+              "reviewCount": 1,
+              "status": "reviewing",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Una parábola de Platón que ilustra cómo la mayoría de la gente está atrapada en el mundo de las apariencias y no puede percibir la verdadera realidad. (Básico)",
+              "difficulty": "basic",
+              "front": "Alegoría de la caverna",
+              "id": "m4fy85dsbacxqy0r52k",
+              "lastReviewed": 1733683227428,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Creencia de que la mente y el cuerpo son entidades separadas. Platón sostenía que la mente era inmortal, mientras que el cuerpo era mortal. (Intermedio)",
+              "difficulty": "intermediate",
+              "front": "Dualismo mente-cuerpo",
+              "id": "m4fy85ds2occjqlt0l6",
+              "lastReviewed": 1733683228732,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Creía que el objetivo de la vida era alcanzar la virtud, que se logra mediante el conocimiento y la razón. También enfatizó la justicia y la armonía social. (Intermedio)",
+              "difficulty": "intermediate",
+              "front": "Ética de Platón",
+              "id": "m4fy85ds79famby3g8i",
+              "lastReviewed": 1733683230116,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Abogó por una sociedad gobernada por filósofos reyes, quienes poseían el conocimiento y la sabiduría necesarios para liderar. (Avanzado)",
+              "difficulty": "advanced",
+              "front": "Política de Platón",
+              "id": "m4fy85dspto4fycd3v8",
+              "lastReviewed": 1733683231532,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Filósofo griego, discípulo de Platón. Su trabajo abarcaba lógica, física, metafísica, ética y política. (Intermedio)",
+              "difficulty": "intermediate",
+              "front": "Aristóteles",
+              "id": "m4fy85dsxnnge0jntxp",
+              "lastReviewed": 1733683232996,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Un sistema formal de razonamiento que utiliza silogismos como argumentos deductivos. Es la base de la lógica moderna. (Avanzado)",
+              "difficulty": "advanced",
+              "front": "Lógica aristotélica",
+              "id": "m4fy85dsovnlzj2k2v",
+              "lastReviewed": 1733683234460,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Explica que todo evento o cosa tiene cuatro tipos de causas: material, formal, eficiente y final. (Básico)",
+              "difficulty": "basic",
+              "front": "Teoría aristotélica de las cuatro causas",
+              "id": "m4fy85dsznr686w2d1",
+              "lastReviewed": 1733683236980,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            }
+          ],
+          "lastUpdated": 1733683236980,
+          "stats": {
+            "completed": 10,
+            "mastered": 9,
+            "reviewing": 1,
+            "total": 10
+          }
+        },
+        "1733683405358": {
+          "flashcards": [
+            {
+              "back": "Filósofo griego que fundó la Academia en Atenas. Es conocido por su teoría de las Formas, que sostiene que las ideas universales son más reales que las cosas físicas.",
+              "difficulty": "basic",
+              "front": "Platón",
+              "id": "m4fyc4z2rfckjyj1rns",
+              "lastReviewed": 1733683412217,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Teoría de Platón que afirma que las ideas o formas universales son la verdadera realidad, mientras que el mundo físico es sólo una imitación imperfecta de esas formas.",
+              "difficulty": "intermediate",
+              "front": "Teoría de las Formas",
+              "id": "m4fyc4z28o6w13e00h",
+              "lastReviewed": 1733683413809,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Filósofo griego, maestro de Platón. Es famoso por su método socrático, un estilo de interrogación que busca exponer contradicciones en los argumentos de la gente.",
+              "difficulty": "basic",
+              "front": "Sócrates",
+              "id": "m4fyc4z2qnfpacoo0z",
+              "lastReviewed": 1733683415209,
+              "reviewCount": 1,
+              "status": "reviewing",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Filósofo griego que estudió en la Academia de Platón. Es conocido por su filosofía sistemática, que abarca lógica, física, ética y política.",
+              "difficulty": "basic",
+              "front": "Aristóteles",
+              "id": "m4fyc4z2hjj7j05focr",
+              "lastReviewed": 1733683419161,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía griega",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Rama de la filosofía que se ocupa de la conducta humana y la moralidad. Los filósofos antiguos como Sócrates, Platón y Aristóteles desarrollaron varias teorías éticas.",
+              "difficulty": "basic",
+              "front": "Ética",
+              "id": "m4fyc4z2es7299v4lb6",
+              "lastReviewed": 1733683420441,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Rama de la filosofía que se ocupa de la organización de las sociedades humanas. Los antiguos filósofos griegos, como Platón y Aristóteles, escribieron extensamente sobre filosofía política.",
+              "difficulty": "intermediate",
+              "front": "Política",
+              "id": "m4fyc4z2i983eei3tm",
+              "lastReviewed": 1733683421489,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Rama de la filosofía que se ocupa del razonamiento y la argumentación. Aristóteles desarrolló un sistema de lógica que todavía se utiliza hoy en día.",
+              "difficulty": "basic",
+              "front": "Lógica",
+              "id": "m4fyc4z2jtvqkwk60gh",
+              "lastReviewed": 1733683422649,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Rama de la filosofía que se ocupa de la naturaleza fundamental de la realidad. Los antiguos filósofos griegos, como Platón y Aristóteles, discutieron cuestiones metafísicas como la existencia de Dios y la naturaleza del ser.",
+              "difficulty": "advanced",
+              "front": "Metafísica",
+              "id": "m4fyc4z2zgngb0jmchn",
+              "lastReviewed": 1733683425505,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Rama de la filosofía que se ocupa del conocimiento. Los antiguos filósofos griegos, como Platón y Aristóteles, desarrollaron diversas teorías epistemológicas sobre la naturaleza del conocimiento y la justificación de las creencias.",
+              "difficulty": "advanced",
+              "front": "Epistemología",
+              "id": "m4fyc4z2xu4yorpcas",
+              "lastReviewed": 1733683426994,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            },
+            {
+              "back": "Rama de la filosofía que se ocupa de la belleza y el arte. Los antiguos filósofos griegos, como Platón y Aristóteles, escribieron sobre la naturaleza de la belleza y el papel del arte en la sociedad.",
+              "difficulty": "intermediate",
+              "front": "Estética",
+              "id": "m4fyc4z24dj7ab70x42",
+              "lastReviewed": 1733683428289,
+              "reviewCount": 1,
+              "status": "mastered",
+              "topic": "Filosofía",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            }
+          ],
+          "lastUpdated": 1733683428289,
+          "stats": {
+            "completed": 10,
+            "mastered": 9,
+            "reviewing": 1,
+            "total": 10
+          }
+        }
+      },
+      "progress": {
+        "1733679270971": {
+          "averageTimePerCard": 0,
+          "completionRate": 70,
+          "date": "2024-12-08T17:34:30.971Z",
+          "mastered": 7,
+          "stats": {
+            "averageTimePerCard": 0,
+            "mastered": 7,
+            "reviewing": 2,
+            "startTime": 1733679264464,
+            "timeSpent": 5,
+            "total": 10
+          },
+          "timeSpent": 5,
+          "timestamp": 1733679270971,
+          "total": 10
+        },
+        "1733679712743": {
+          "averageTimePerCard": 1,
+          "completionRate": 70,
+          "date": "2024-12-08T17:41:52.743Z",
+          "mastered": 7,
+          "reviewing": 2,
+          "timeSpent": 12,
+          "timestamp": 1733679712743,
+          "total": 10
+        },
+        "1733679718495": {
+          "averageTimePerCard": 1,
+          "completionRate": 80,
+          "date": "2024-12-08T17:41:58.495Z",
+          "mastered": 8,
+          "reviewing": 2,
+          "timeSpent": 18,
+          "timestamp": 1733679718495,
+          "total": 10
+        },
+        "1733679848578": {
+          "averageTime": 0,
+          "completionRate": 100,
+          "date": "2024-12-08T17:44:08.578Z",
+          "mastered": 10,
+          "reviewing": 0,
+          "timeSpent": 7,
+          "timestamp": 1733679848578,
+          "total": 10
+        },
+        "1733679921836": {
+          "averageTime": 0,
+          "completionRate": 70,
+          "date": "2024-12-08T17:45:21.836Z",
+          "mastered": 7,
+          "reviewing": 2,
+          "timeSpent": 8,
+          "timestamp": 1733679921836,
+          "total": 10
+        },
+        "1733680367864": {
+          "averageTime": 0,
+          "completionRate": 70,
+          "date": "2024-12-08T17:52:47.864Z",
+          "mastered": 7,
+          "reviewing": 2,
+          "timeSpent": 7,
+          "timestamp": 1733680367864,
+          "total": 10
+        },
+        "1733680591581": {
+          "averageTime": 0,
+          "completionRate": 100,
+          "date": "2024-12-08T17:56:31.582Z",
+          "mastered": 10,
+          "reviewing": 0,
+          "timeSpent": 9,
+          "timestamp": 1733680591581,
+          "total": 10
+        },
+        "1733680737658": {
+          "averageTime": 0,
+          "completionRate": 40,
+          "date": "2024-12-08T17:58:57.658Z",
+          "mastered": 4,
+          "reviewing": 6,
+          "timeSpent": 6,
+          "timestamp": 1733680737658,
+          "total": 10
+        },
+        "1733681225454": {
+          "averageTime": 1,
+          "completionRate": 100,
+          "date": "2024-12-08T18:07:05.454Z",
+          "mastered": 10,
+          "reviewing": 0,
+          "timeSpent": 18,
+          "timestamp": 1733681225454,
+          "total": 10
+        },
+        "1733681662514": {
+          "averageTime": 0,
+          "completionRate": 40,
+          "date": "2024-12-08T18:14:22.514Z",
+          "mastered": 4,
+          "reviewing": 5,
+          "timeSpent": 7,
+          "timestamp": 1733681662514,
+          "total": 10
+        },
+        "1733681967131": {
+          "averageTime": 7,
+          "completionRate": 70,
+          "date": "2024-12-08T18:19:27.131Z",
+          "mastered": 7,
+          "reviewing": 2,
+          "timeSpent": 77,
+          "timestamp": 1733681967131,
+          "total": 10
+        },
+        "1733683088669": {
+          "averageTime": 1,
+          "completionRate": 80,
+          "date": "2024-12-08T18:38:08.669Z",
+          "mastered": 8,
+          "reviewing": 2,
+          "timeSpent": 18,
+          "timestamp": 1733683088669,
+          "total": 10
+        },
+        "1733683237069": {
+          "averageTime": 1,
+          "completionRate": 90,
+          "date": "2024-12-08T18:40:37.069Z",
+          "mastered": 9,
+          "reviewing": 1,
+          "timeSpent": 17,
+          "timestamp": 1733683237069,
+          "total": 10
+        },
+        "1733683428377": {
+          "averageTime": 2,
+          "completionRate": 90,
+          "date": "2024-12-08T18:43:48.377Z",
+          "mastered": 9,
+          "reviewing": 1,
+          "timeSpent": 22,
+          "timestamp": 1733683428377,
+          "total": 10
+        },
+        "averageScore": 40,
+        "totalCorrect": 12,
+        "totalQuestions": 30,
+        "totalQuizzes": 3
+      },
+      "quizHistory": {
+        "1733630313612": {
+          "correctAnswers": 8,
+          "endTime": "2024-12-08T03:58:33.612Z",
+          "incorrectAnswers": 2,
+          "score": 80,
+          "selectedNotes": [
+            {
+              "content": "Apunte de los numeros reale slos cuale sestan constituidos del 0 al 9 creo no estoy seguro",
+              "createdAt": "2024-12-07T01:30:40.978Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "id": "e8cb198b-db1b-4185-b8a6-31f9a8552933",
+              "subjectId": "afdba2b3-298f-404e-9681-65925198b409",
+              "title": "Numeros reales",
+              "updatedAt": "2024-12-07T01:30:40.978Z"
+            }
+          ],
+          "selectedSubjects": [
+            {
+              "createdAt": "2024-12-07T01:30:10.728Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "description": "La magia de los numeros",
+              "id": "afdba2b3-298f-404e-9681-65925198b409",
+              "name": "Matematicas",
+              "notes": {
+                "434fd8e1-691d-477f-aec4-d948745a3083": {
+                  "content": "## 1. Contenido Principal (mejorado y expandido)\n\n**Ecuaciones Lineales**\n\nUna ecuación lineal es una ecuación que puede expresarse en la forma:\n\n```\nax + b = 0\n```\n\nDonde:\n\n* `a` es el coeficiente de la variable `x`\n* `b` es la constante\n\n**Forma General de una Ecuación Lineal**\n\nLa forma general de una ecuación lineal es:\n\n```\ny = mx + c\n```\n\nDonde:\n\n* `y` es la variable dependiente\n* `x` es la variable independiente\n* `m` es la pendiente de la gráfica de la ecuación\n* `c` es el intercepto con el eje `y` de la gráfica\n\n**Pendiente e Intercepto**\n\n* La **pendiente** de una línea recta es la medida de su inclinación y se calcula mediante la siguiente fórmula:\n\n```\nm = (y2 - y1) / (x2 - x1)\n```\n\nDonde `(x1, y1)` y `(x2, y2)` son dos puntos de la línea.\n\n* El **intercepto** con el eje `y` de una línea recta es el valor de `y` cuando `x` es igual a cero. Se calcula sustituyendo `x = 0` en la ecuación de la línea:\n\n```\nc = y - mx\n```\n\n**Resolución de Ecuaciones Lineales**\n\nHay varios métodos para resolver ecuaciones lineales, entre ellos:\n\n* **Igualación a cero:** Restar `b` de ambos lados de la ecuación para obtener `ax = -b`. A continuación, dividir ambos lados por `a` para obtener el valor de `x`.\n* **Forma de pendiente-intercepto:** Si la ecuación está en forma de pendiente-intercepto, restar `mx` de ambos lados para obtener `y = c`.\n* **Sustitución:** Sustituir el valor de una variable en otra ecuación para resolver la otra variable.\n\n**Tipos de Ecuaciones Lineales**\n\nExisten diferentes tipos de ecuaciones lineales, como:\n\n* **Ecuaciones consistentes:** Tienen al menos una solución.\n* **Ecuaciones inconsistentes:** No tienen solución.\n* **Ecuaciones dependientes:** Tienen infinitas soluciones.\n\n## 2. Ejemplos Prácticos\n\n**Ejemplo 1:**\n\nResolver la ecuación lineal `2x - 5 = 11`.\n\n**Solución:**\n\n* Sumar 5 a ambos lados: `2x = 16`\n* Dividir ambos lados por 2: `x = 8`\n\n**Ejemplo 2:**\n\nDeterminar la pendiente y el intercepto de la línea recta representada por la ecuación `y = -3x + 2`.\n\n**Solución:**\n\n* Pendiente: `m = -3`\n* Intercepto: `c = 2`\n\n**Ejemplo 3:**\n\nResolver el sistema de ecuaciones lineales:\n\n```\nx + y = 5\nx - y = 1\n```\n\n**Solución:**\n\n* Sumar las dos ecuaciones para eliminar `y`: `2x = 6`\n* Dividir ambos lados por 2: `x = 3`\n* Sustituir `x = 3` en cualquiera de las ecuaciones para encontrar `y`: `y = 2`\n\n## 3. Puntos Clave a Recordar\n\n* Una ecuación lineal es una ecuación que puede expresarse en forma `ax + b = 0`.\n* La forma general de una ecuación lineal es `y = mx + c`, donde `m` es la pendiente y `c` es el intercepto.\n* La pendiente de una línea recta es la medida de su inclinación y el intercepto es el valor de `y` cuando `x` es igual a cero.\n* Existen diferentes métodos para resolver ecuaciones lineales, como igualación a cero, forma de pendiente-intercepto y sustitución.\n* Los tipos de ecuaciones lineales incluyen ecuaciones consistentes, inconsistentes y dependientes.\n\n## 4. Referencias o Recursos Adicionales\n\n* [Ecuaciones Lineales](https://www.khanacademy.org/math/algebra/x2eef969c74e0d802:linear-equations/x2eef969c74e0d802:intro-to-linear-equations/v/intro-to-linear-equations)\n* [Ecuaciones Lineales - Guía Completa](https://www.varsitytutors.com/linear-equations)",
+                  "createdAt": "2024-12-07T20:48:04.792Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "434fd8e1-691d-477f-aec4-d948745a3083",
+                  "title": "ecuaciones lineales",
+                  "updatedAt": "2024-12-07T20:48:04.792Z"
+                },
+                "a4f44535-780e-48c1-bafa-379e37f7f122": {
+                  "content": "Las operaciones son la suma resta multiplicacion y divicion, existen mas pero no son las simples",
+                  "createdAt": "2024-12-07T01:31:22.133Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "a4f44535-780e-48c1-bafa-379e37f7f122",
+                  "title": "Operaciones",
+                  "updatedAt": "2024-12-07T01:31:22.133Z"
+                },
+                "e8cb198b-db1b-4185-b8a6-31f9a8552933": {
+                  "content": "Apunte de los numeros reale slos cuale sestan constituidos del 0 al 9 creo no estoy seguro",
+                  "createdAt": "2024-12-07T01:30:40.978Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "e8cb198b-db1b-4185-b8a6-31f9a8552933",
+                  "title": "Numeros reales",
+                  "updatedAt": "2024-12-07T01:30:40.978Z"
+                }
+              },
+              "updatedAt": "2024-12-07T20:48:04.792Z"
+            }
+          ],
+          "startTime": "2024-12-08T03:57:22.720Z",
+          "timestamp": "2024-12-08T03:58:33.612Z",
+          "totalQuestions": 10
+        },
+        "1733630313615": {
+          "correctAnswers": 8,
+          "endTime": "2024-12-08T03:58:33.615Z",
+          "incorrectAnswers": 2,
+          "score": 80,
+          "selectedNotes": [
+            {
+              "content": "Apunte de los numeros reale slos cuale sestan constituidos del 0 al 9 creo no estoy seguro",
+              "createdAt": "2024-12-07T01:30:40.978Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "id": "e8cb198b-db1b-4185-b8a6-31f9a8552933",
+              "subjectId": "afdba2b3-298f-404e-9681-65925198b409",
+              "title": "Numeros reales",
+              "updatedAt": "2024-12-07T01:30:40.978Z"
+            }
+          ],
+          "selectedSubjects": [
+            {
+              "createdAt": "2024-12-07T01:30:10.728Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "description": "La magia de los numeros",
+              "id": "afdba2b3-298f-404e-9681-65925198b409",
+              "name": "Matematicas",
+              "notes": {
+                "434fd8e1-691d-477f-aec4-d948745a3083": {
+                  "content": "## 1. Contenido Principal (mejorado y expandido)\n\n**Ecuaciones Lineales**\n\nUna ecuación lineal es una ecuación que puede expresarse en la forma:\n\n```\nax + b = 0\n```\n\nDonde:\n\n* `a` es el coeficiente de la variable `x`\n* `b` es la constante\n\n**Forma General de una Ecuación Lineal**\n\nLa forma general de una ecuación lineal es:\n\n```\ny = mx + c\n```\n\nDonde:\n\n* `y` es la variable dependiente\n* `x` es la variable independiente\n* `m` es la pendiente de la gráfica de la ecuación\n* `c` es el intercepto con el eje `y` de la gráfica\n\n**Pendiente e Intercepto**\n\n* La **pendiente** de una línea recta es la medida de su inclinación y se calcula mediante la siguiente fórmula:\n\n```\nm = (y2 - y1) / (x2 - x1)\n```\n\nDonde `(x1, y1)` y `(x2, y2)` son dos puntos de la línea.\n\n* El **intercepto** con el eje `y` de una línea recta es el valor de `y` cuando `x` es igual a cero. Se calcula sustituyendo `x = 0` en la ecuación de la línea:\n\n```\nc = y - mx\n```\n\n**Resolución de Ecuaciones Lineales**\n\nHay varios métodos para resolver ecuaciones lineales, entre ellos:\n\n* **Igualación a cero:** Restar `b` de ambos lados de la ecuación para obtener `ax = -b`. A continuación, dividir ambos lados por `a` para obtener el valor de `x`.\n* **Forma de pendiente-intercepto:** Si la ecuación está en forma de pendiente-intercepto, restar `mx` de ambos lados para obtener `y = c`.\n* **Sustitución:** Sustituir el valor de una variable en otra ecuación para resolver la otra variable.\n\n**Tipos de Ecuaciones Lineales**\n\nExisten diferentes tipos de ecuaciones lineales, como:\n\n* **Ecuaciones consistentes:** Tienen al menos una solución.\n* **Ecuaciones inconsistentes:** No tienen solución.\n* **Ecuaciones dependientes:** Tienen infinitas soluciones.\n\n## 2. Ejemplos Prácticos\n\n**Ejemplo 1:**\n\nResolver la ecuación lineal `2x - 5 = 11`.\n\n**Solución:**\n\n* Sumar 5 a ambos lados: `2x = 16`\n* Dividir ambos lados por 2: `x = 8`\n\n**Ejemplo 2:**\n\nDeterminar la pendiente y el intercepto de la línea recta representada por la ecuación `y = -3x + 2`.\n\n**Solución:**\n\n* Pendiente: `m = -3`\n* Intercepto: `c = 2`\n\n**Ejemplo 3:**\n\nResolver el sistema de ecuaciones lineales:\n\n```\nx + y = 5\nx - y = 1\n```\n\n**Solución:**\n\n* Sumar las dos ecuaciones para eliminar `y`: `2x = 6`\n* Dividir ambos lados por 2: `x = 3`\n* Sustituir `x = 3` en cualquiera de las ecuaciones para encontrar `y`: `y = 2`\n\n## 3. Puntos Clave a Recordar\n\n* Una ecuación lineal es una ecuación que puede expresarse en forma `ax + b = 0`.\n* La forma general de una ecuación lineal es `y = mx + c`, donde `m` es la pendiente y `c` es el intercepto.\n* La pendiente de una línea recta es la medida de su inclinación y el intercepto es el valor de `y` cuando `x` es igual a cero.\n* Existen diferentes métodos para resolver ecuaciones lineales, como igualación a cero, forma de pendiente-intercepto y sustitución.\n* Los tipos de ecuaciones lineales incluyen ecuaciones consistentes, inconsistentes y dependientes.\n\n## 4. Referencias o Recursos Adicionales\n\n* [Ecuaciones Lineales](https://www.khanacademy.org/math/algebra/x2eef969c74e0d802:linear-equations/x2eef969c74e0d802:intro-to-linear-equations/v/intro-to-linear-equations)\n* [Ecuaciones Lineales - Guía Completa](https://www.varsitytutors.com/linear-equations)",
+                  "createdAt": "2024-12-07T20:48:04.792Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "434fd8e1-691d-477f-aec4-d948745a3083",
+                  "title": "ecuaciones lineales",
+                  "updatedAt": "2024-12-07T20:48:04.792Z"
+                },
+                "a4f44535-780e-48c1-bafa-379e37f7f122": {
+                  "content": "Las operaciones son la suma resta multiplicacion y divicion, existen mas pero no son las simples",
+                  "createdAt": "2024-12-07T01:31:22.133Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "a4f44535-780e-48c1-bafa-379e37f7f122",
+                  "title": "Operaciones",
+                  "updatedAt": "2024-12-07T01:31:22.133Z"
+                },
+                "e8cb198b-db1b-4185-b8a6-31f9a8552933": {
+                  "content": "Apunte de los numeros reale slos cuale sestan constituidos del 0 al 9 creo no estoy seguro",
+                  "createdAt": "2024-12-07T01:30:40.978Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "e8cb198b-db1b-4185-b8a6-31f9a8552933",
+                  "title": "Numeros reales",
+                  "updatedAt": "2024-12-07T01:30:40.978Z"
+                }
+              },
+              "updatedAt": "2024-12-07T20:48:04.792Z"
+            }
+          ],
+          "startTime": "2024-12-08T03:57:22.720Z",
+          "timestamp": "2024-12-08T03:58:33.615Z",
+          "totalQuestions": 10
+        },
+        "1733630530937": {
+          "correctAnswers": 3,
+          "endTime": "2024-12-08T04:02:10.937Z",
+          "incorrectAnswers": 7,
+          "score": 30,
+          "selectedNotes": [
+            {
+              "content": "**1. Contenido principal (mejorado y expandido)**\n\n**Platón** (c. 428 - 348 a. C.) fue un filósofo griego, estudiante de Sócrates y maestro de Aristóteles. Su filosofía se basó en los principios de dualismo, teoría de las Formas y ética virtuosa.\n\n**Dualismo**\n\nPlatón creía que el mundo estaba dividido en dos reinos: el mundo sensible y el mundo inteligible. El mundo sensible es el mundo que percibimos a través de nuestros sentidos, que es temporal, cambiante e imperfecto. El mundo inteligible es el mundo de las Formas o Ideas, que son eternas, inmutables y perfectas.\n\n**Teoría de las Formas**\n\nSegún Platón, el mundo sensible es una mera sombra del mundo inteligible. Las cosas en el mundo sensible son copias imperfectas de las Formas en el mundo inteligible. Por ejemplo, una silla particular en el mundo sensible es una copia imperfecta de la Forma de la Silla en el mundo inteligible.\n\n**Ética virtuosa**\n\nPlatón creía que el propósito de la vida era lograr la virtud. La virtud era la excelencia del carácter, que incluía cualidades como la sabiduría, la templanza, el coraje y la justicia. La virtud se podía lograr mediante el conocimiento y el autocontrol.\n\n**2. Ejemplos prácticos**\n\n* **Mundo sensible:** Una pintura de un paisaje.\n* **Mundo inteligible:** La Forma del Paisaje, que representa la esencia o idea perfecta de un paisaje.\n* **Virtud de la sabiduría:** Un filósofo que busca el conocimiento y comprende la naturaleza del mundo.\n\n**3. Puntos clave a recordar**\n\n* Platón creía que el mundo estaba dividido en el mundo sensible y el mundo inteligible.\n* La teoría de las Formas postula que el mundo sensible es una sombra del mundo inteligible.\n* La virtud era el objetivo principal de la vida y se podía lograr mediante el conocimiento.\n\n**4. Referencias o recursos adicionales**\n\n* La República de Platón\n* El Simposio de Platón\n* El Fedón de Platón\n* Historia de la Filosofía Griega, Volumen I, por W.K.C. Guthrie",
+              "createdAt": "2024-12-07T02:44:18.053Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "id": "-ODU-DeMFXzeo4Fu0aaf",
+              "subject": "Filozofia",
+              "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+              "title": "platon",
+              "updatedAt": "2024-12-07T02:44:18.053Z",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            }
+          ],
+          "selectedSubjects": [
+            {
+              "createdAt": "2024-12-07T01:32:04.840Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "description": "El arte de penzar",
+              "id": "967f37af-7481-45a5-b09a-8656adb76bf0",
+              "name": "Filozofia",
+              "notes": {
+                "-ODU-DeMFXzeo4Fu0aaf": {
+                  "content": "**1. Contenido principal (mejorado y expandido)**\n\n**Platón** (c. 428 - 348 a. C.) fue un filósofo griego, estudiante de Sócrates y maestro de Aristóteles. Su filosofía se basó en los principios de dualismo, teoría de las Formas y ética virtuosa.\n\n**Dualismo**\n\nPlatón creía que el mundo estaba dividido en dos reinos: el mundo sensible y el mundo inteligible. El mundo sensible es el mundo que percibimos a través de nuestros sentidos, que es temporal, cambiante e imperfecto. El mundo inteligible es el mundo de las Formas o Ideas, que son eternas, inmutables y perfectas.\n\n**Teoría de las Formas**\n\nSegún Platón, el mundo sensible es una mera sombra del mundo inteligible. Las cosas en el mundo sensible son copias imperfectas de las Formas en el mundo inteligible. Por ejemplo, una silla particular en el mundo sensible es una copia imperfecta de la Forma de la Silla en el mundo inteligible.\n\n**Ética virtuosa**\n\nPlatón creía que el propósito de la vida era lograr la virtud. La virtud era la excelencia del carácter, que incluía cualidades como la sabiduría, la templanza, el coraje y la justicia. La virtud se podía lograr mediante el conocimiento y el autocontrol.\n\n**2. Ejemplos prácticos**\n\n* **Mundo sensible:** Una pintura de un paisaje.\n* **Mundo inteligible:** La Forma del Paisaje, que representa la esencia o idea perfecta de un paisaje.\n* **Virtud de la sabiduría:** Un filósofo que busca el conocimiento y comprende la naturaleza del mundo.\n\n**3. Puntos clave a recordar**\n\n* Platón creía que el mundo estaba dividido en el mundo sensible y el mundo inteligible.\n* La teoría de las Formas postula que el mundo sensible es una sombra del mundo inteligible.\n* La virtud era el objetivo principal de la vida y se podía lograr mediante el conocimiento.\n\n**4. Referencias o recursos adicionales**\n\n* La República de Platón\n* El Simposio de Platón\n* El Fedón de Platón\n* Historia de la Filosofía Griega, Volumen I, por W.K.C. Guthrie",
+                  "createdAt": "2024-12-07T02:44:18.053Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "subject": "Filozofia",
+                  "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+                  "title": "platon",
+                  "updatedAt": "2024-12-07T02:44:18.053Z",
+                  "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+                },
+                "1dbc572f-d1cb-46ed-9ff8-aec3fc576471": {
+                  "content": "Platon era un filosofo griego etc",
+                  "createdAt": "2024-12-07T01:32:50.713Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "1dbc572f-d1cb-46ed-9ff8-aec3fc576471",
+                  "subject": "Filozofia",
+                  "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+                  "title": "Platon",
+                  "updatedAt": "2024-12-07T20:44:54.868Z",
+                  "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+                }
+              },
+              "updatedAt": "2024-12-07T01:56:25.389Z"
+            }
+          ],
+          "startTime": "2024-12-08T04:01:44.898Z",
+          "timestamp": "2024-12-08T04:02:10.937Z",
+          "totalQuestions": 10
+        },
+        "1733630530938": {
+          "correctAnswers": 3,
+          "endTime": "2024-12-08T04:02:10.938Z",
+          "incorrectAnswers": 7,
+          "score": 30,
+          "selectedNotes": [
+            {
+              "content": "**1. Contenido principal (mejorado y expandido)**\n\n**Platón** (c. 428 - 348 a. C.) fue un filósofo griego, estudiante de Sócrates y maestro de Aristóteles. Su filosofía se basó en los principios de dualismo, teoría de las Formas y ética virtuosa.\n\n**Dualismo**\n\nPlatón creía que el mundo estaba dividido en dos reinos: el mundo sensible y el mundo inteligible. El mundo sensible es el mundo que percibimos a través de nuestros sentidos, que es temporal, cambiante e imperfecto. El mundo inteligible es el mundo de las Formas o Ideas, que son eternas, inmutables y perfectas.\n\n**Teoría de las Formas**\n\nSegún Platón, el mundo sensible es una mera sombra del mundo inteligible. Las cosas en el mundo sensible son copias imperfectas de las Formas en el mundo inteligible. Por ejemplo, una silla particular en el mundo sensible es una copia imperfecta de la Forma de la Silla en el mundo inteligible.\n\n**Ética virtuosa**\n\nPlatón creía que el propósito de la vida era lograr la virtud. La virtud era la excelencia del carácter, que incluía cualidades como la sabiduría, la templanza, el coraje y la justicia. La virtud se podía lograr mediante el conocimiento y el autocontrol.\n\n**2. Ejemplos prácticos**\n\n* **Mundo sensible:** Una pintura de un paisaje.\n* **Mundo inteligible:** La Forma del Paisaje, que representa la esencia o idea perfecta de un paisaje.\n* **Virtud de la sabiduría:** Un filósofo que busca el conocimiento y comprende la naturaleza del mundo.\n\n**3. Puntos clave a recordar**\n\n* Platón creía que el mundo estaba dividido en el mundo sensible y el mundo inteligible.\n* La teoría de las Formas postula que el mundo sensible es una sombra del mundo inteligible.\n* La virtud era el objetivo principal de la vida y se podía lograr mediante el conocimiento.\n\n**4. Referencias o recursos adicionales**\n\n* La República de Platón\n* El Simposio de Platón\n* El Fedón de Platón\n* Historia de la Filosofía Griega, Volumen I, por W.K.C. Guthrie",
+              "createdAt": "2024-12-07T02:44:18.053Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "id": "-ODU-DeMFXzeo4Fu0aaf",
+              "subject": "Filozofia",
+              "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+              "title": "platon",
+              "updatedAt": "2024-12-07T02:44:18.053Z",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            }
+          ],
+          "selectedSubjects": [
+            {
+              "createdAt": "2024-12-07T01:32:04.840Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "description": "El arte de penzar",
+              "id": "967f37af-7481-45a5-b09a-8656adb76bf0",
+              "name": "Filozofia",
+              "notes": {
+                "-ODU-DeMFXzeo4Fu0aaf": {
+                  "content": "**1. Contenido principal (mejorado y expandido)**\n\n**Platón** (c. 428 - 348 a. C.) fue un filósofo griego, estudiante de Sócrates y maestro de Aristóteles. Su filosofía se basó en los principios de dualismo, teoría de las Formas y ética virtuosa.\n\n**Dualismo**\n\nPlatón creía que el mundo estaba dividido en dos reinos: el mundo sensible y el mundo inteligible. El mundo sensible es el mundo que percibimos a través de nuestros sentidos, que es temporal, cambiante e imperfecto. El mundo inteligible es el mundo de las Formas o Ideas, que son eternas, inmutables y perfectas.\n\n**Teoría de las Formas**\n\nSegún Platón, el mundo sensible es una mera sombra del mundo inteligible. Las cosas en el mundo sensible son copias imperfectas de las Formas en el mundo inteligible. Por ejemplo, una silla particular en el mundo sensible es una copia imperfecta de la Forma de la Silla en el mundo inteligible.\n\n**Ética virtuosa**\n\nPlatón creía que el propósito de la vida era lograr la virtud. La virtud era la excelencia del carácter, que incluía cualidades como la sabiduría, la templanza, el coraje y la justicia. La virtud se podía lograr mediante el conocimiento y el autocontrol.\n\n**2. Ejemplos prácticos**\n\n* **Mundo sensible:** Una pintura de un paisaje.\n* **Mundo inteligible:** La Forma del Paisaje, que representa la esencia o idea perfecta de un paisaje.\n* **Virtud de la sabiduría:** Un filósofo que busca el conocimiento y comprende la naturaleza del mundo.\n\n**3. Puntos clave a recordar**\n\n* Platón creía que el mundo estaba dividido en el mundo sensible y el mundo inteligible.\n* La teoría de las Formas postula que el mundo sensible es una sombra del mundo inteligible.\n* La virtud era el objetivo principal de la vida y se podía lograr mediante el conocimiento.\n\n**4. Referencias o recursos adicionales**\n\n* La República de Platón\n* El Simposio de Platón\n* El Fedón de Platón\n* Historia de la Filosofía Griega, Volumen I, por W.K.C. Guthrie",
+                  "createdAt": "2024-12-07T02:44:18.053Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "subject": "Filozofia",
+                  "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+                  "title": "platon",
+                  "updatedAt": "2024-12-07T02:44:18.053Z",
+                  "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+                },
+                "1dbc572f-d1cb-46ed-9ff8-aec3fc576471": {
+                  "content": "Platon era un filosofo griego etc",
+                  "createdAt": "2024-12-07T01:32:50.713Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "1dbc572f-d1cb-46ed-9ff8-aec3fc576471",
+                  "subject": "Filozofia",
+                  "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+                  "title": "Platon",
+                  "updatedAt": "2024-12-07T20:44:54.868Z",
+                  "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+                }
+              },
+              "updatedAt": "2024-12-07T01:56:25.389Z"
+            }
+          ],
+          "startTime": "2024-12-08T04:01:44.898Z",
+          "timestamp": "2024-12-08T04:02:10.938Z",
+          "totalQuestions": 10
+        },
+        "1733673565747": {
+          "correctAnswers": 1,
+          "endTime": "2024-12-08T15:59:25.747Z",
+          "incorrectAnswers": 9,
+          "score": 10,
+          "selectedNotes": [
+            {
+              "content": "**1. Contenido principal (mejorado y expandido)**\n\n**Platón** (c. 428 - 348 a. C.) fue un filósofo griego, estudiante de Sócrates y maestro de Aristóteles. Su filosofía se basó en los principios de dualismo, teoría de las Formas y ética virtuosa.\n\n**Dualismo**\n\nPlatón creía que el mundo estaba dividido en dos reinos: el mundo sensible y el mundo inteligible. El mundo sensible es el mundo que percibimos a través de nuestros sentidos, que es temporal, cambiante e imperfecto. El mundo inteligible es el mundo de las Formas o Ideas, que son eternas, inmutables y perfectas.\n\n**Teoría de las Formas**\n\nSegún Platón, el mundo sensible es una mera sombra del mundo inteligible. Las cosas en el mundo sensible son copias imperfectas de las Formas en el mundo inteligible. Por ejemplo, una silla particular en el mundo sensible es una copia imperfecta de la Forma de la Silla en el mundo inteligible.\n\n**Ética virtuosa**\n\nPlatón creía que el propósito de la vida era lograr la virtud. La virtud era la excelencia del carácter, que incluía cualidades como la sabiduría, la templanza, el coraje y la justicia. La virtud se podía lograr mediante el conocimiento y el autocontrol.\n\n**2. Ejemplos prácticos**\n\n* **Mundo sensible:** Una pintura de un paisaje.\n* **Mundo inteligible:** La Forma del Paisaje, que representa la esencia o idea perfecta de un paisaje.\n* **Virtud de la sabiduría:** Un filósofo que busca el conocimiento y comprende la naturaleza del mundo.\n\n**3. Puntos clave a recordar**\n\n* Platón creía que el mundo estaba dividido en el mundo sensible y el mundo inteligible.\n* La teoría de las Formas postula que el mundo sensible es una sombra del mundo inteligible.\n* La virtud era el objetivo principal de la vida y se podía lograr mediante el conocimiento.\n\n**4. Referencias o recursos adicionales**\n\n* La República de Platón\n* El Simposio de Platón\n* El Fedón de Platón\n* Historia de la Filosofía Griega, Volumen I, por W.K.C. Guthrie",
+              "createdAt": "2024-12-07T02:44:18.053Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "id": "-ODU-DeMFXzeo4Fu0aaf",
+              "subject": "Filozofia",
+              "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+              "title": "platon",
+              "updatedAt": "2024-12-07T02:44:18.053Z",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            }
+          ],
+          "selectedSubjects": [
+            {
+              "createdAt": "2024-12-07T01:32:04.840Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "description": "El arte de penzar",
+              "id": "967f37af-7481-45a5-b09a-8656adb76bf0",
+              "name": "Filozofia",
+              "notes": {
+                "-ODU-DeMFXzeo4Fu0aaf": {
+                  "content": "**1. Contenido principal (mejorado y expandido)**\n\n**Platón** (c. 428 - 348 a. C.) fue un filósofo griego, estudiante de Sócrates y maestro de Aristóteles. Su filosofía se basó en los principios de dualismo, teoría de las Formas y ética virtuosa.\n\n**Dualismo**\n\nPlatón creía que el mundo estaba dividido en dos reinos: el mundo sensible y el mundo inteligible. El mundo sensible es el mundo que percibimos a través de nuestros sentidos, que es temporal, cambiante e imperfecto. El mundo inteligible es el mundo de las Formas o Ideas, que son eternas, inmutables y perfectas.\n\n**Teoría de las Formas**\n\nSegún Platón, el mundo sensible es una mera sombra del mundo inteligible. Las cosas en el mundo sensible son copias imperfectas de las Formas en el mundo inteligible. Por ejemplo, una silla particular en el mundo sensible es una copia imperfecta de la Forma de la Silla en el mundo inteligible.\n\n**Ética virtuosa**\n\nPlatón creía que el propósito de la vida era lograr la virtud. La virtud era la excelencia del carácter, que incluía cualidades como la sabiduría, la templanza, el coraje y la justicia. La virtud se podía lograr mediante el conocimiento y el autocontrol.\n\n**2. Ejemplos prácticos**\n\n* **Mundo sensible:** Una pintura de un paisaje.\n* **Mundo inteligible:** La Forma del Paisaje, que representa la esencia o idea perfecta de un paisaje.\n* **Virtud de la sabiduría:** Un filósofo que busca el conocimiento y comprende la naturaleza del mundo.\n\n**3. Puntos clave a recordar**\n\n* Platón creía que el mundo estaba dividido en el mundo sensible y el mundo inteligible.\n* La teoría de las Formas postula que el mundo sensible es una sombra del mundo inteligible.\n* La virtud era el objetivo principal de la vida y se podía lograr mediante el conocimiento.\n\n**4. Referencias o recursos adicionales**\n\n* La República de Platón\n* El Simposio de Platón\n* El Fedón de Platón\n* Historia de la Filosofía Griega, Volumen I, por W.K.C. Guthrie",
+                  "createdAt": "2024-12-07T02:44:18.053Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "subject": "Filozofia",
+                  "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+                  "title": "platon",
+                  "updatedAt": "2024-12-07T02:44:18.053Z",
+                  "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+                },
+                "1dbc572f-d1cb-46ed-9ff8-aec3fc576471": {
+                  "content": "Platon era un filosofo griego etc",
+                  "createdAt": "2024-12-07T01:32:50.713Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "1dbc572f-d1cb-46ed-9ff8-aec3fc576471",
+                  "subject": "Filozofia",
+                  "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+                  "title": "Platon",
+                  "updatedAt": "2024-12-07T20:44:54.868Z",
+                  "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+                }
+              },
+              "updatedAt": "2024-12-07T01:56:25.389Z"
+            }
+          ],
+          "startTime": "2024-12-08T15:57:34.535Z",
+          "timestamp": "2024-12-08T15:59:25.747Z",
+          "totalQuestions": 10
+        },
+        "1733673565751": {
+          "correctAnswers": 1,
+          "endTime": "2024-12-08T15:59:25.751Z",
+          "incorrectAnswers": 9,
+          "score": 10,
+          "selectedNotes": [
+            {
+              "content": "**1. Contenido principal (mejorado y expandido)**\n\n**Platón** (c. 428 - 348 a. C.) fue un filósofo griego, estudiante de Sócrates y maestro de Aristóteles. Su filosofía se basó en los principios de dualismo, teoría de las Formas y ética virtuosa.\n\n**Dualismo**\n\nPlatón creía que el mundo estaba dividido en dos reinos: el mundo sensible y el mundo inteligible. El mundo sensible es el mundo que percibimos a través de nuestros sentidos, que es temporal, cambiante e imperfecto. El mundo inteligible es el mundo de las Formas o Ideas, que son eternas, inmutables y perfectas.\n\n**Teoría de las Formas**\n\nSegún Platón, el mundo sensible es una mera sombra del mundo inteligible. Las cosas en el mundo sensible son copias imperfectas de las Formas en el mundo inteligible. Por ejemplo, una silla particular en el mundo sensible es una copia imperfecta de la Forma de la Silla en el mundo inteligible.\n\n**Ética virtuosa**\n\nPlatón creía que el propósito de la vida era lograr la virtud. La virtud era la excelencia del carácter, que incluía cualidades como la sabiduría, la templanza, el coraje y la justicia. La virtud se podía lograr mediante el conocimiento y el autocontrol.\n\n**2. Ejemplos prácticos**\n\n* **Mundo sensible:** Una pintura de un paisaje.\n* **Mundo inteligible:** La Forma del Paisaje, que representa la esencia o idea perfecta de un paisaje.\n* **Virtud de la sabiduría:** Un filósofo que busca el conocimiento y comprende la naturaleza del mundo.\n\n**3. Puntos clave a recordar**\n\n* Platón creía que el mundo estaba dividido en el mundo sensible y el mundo inteligible.\n* La teoría de las Formas postula que el mundo sensible es una sombra del mundo inteligible.\n* La virtud era el objetivo principal de la vida y se podía lograr mediante el conocimiento.\n\n**4. Referencias o recursos adicionales**\n\n* La República de Platón\n* El Simposio de Platón\n* El Fedón de Platón\n* Historia de la Filosofía Griega, Volumen I, por W.K.C. Guthrie",
+              "createdAt": "2024-12-07T02:44:18.053Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "id": "-ODU-DeMFXzeo4Fu0aaf",
+              "subject": "Filozofia",
+              "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+              "title": "platon",
+              "updatedAt": "2024-12-07T02:44:18.053Z",
+              "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+            }
+          ],
+          "selectedSubjects": [
+            {
+              "createdAt": "2024-12-07T01:32:04.840Z",
+              "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+              "description": "El arte de penzar",
+              "id": "967f37af-7481-45a5-b09a-8656adb76bf0",
+              "name": "Filozofia",
+              "notes": {
+                "-ODU-DeMFXzeo4Fu0aaf": {
+                  "content": "**1. Contenido principal (mejorado y expandido)**\n\n**Platón** (c. 428 - 348 a. C.) fue un filósofo griego, estudiante de Sócrates y maestro de Aristóteles. Su filosofía se basó en los principios de dualismo, teoría de las Formas y ética virtuosa.\n\n**Dualismo**\n\nPlatón creía que el mundo estaba dividido en dos reinos: el mundo sensible y el mundo inteligible. El mundo sensible es el mundo que percibimos a través de nuestros sentidos, que es temporal, cambiante e imperfecto. El mundo inteligible es el mundo de las Formas o Ideas, que son eternas, inmutables y perfectas.\n\n**Teoría de las Formas**\n\nSegún Platón, el mundo sensible es una mera sombra del mundo inteligible. Las cosas en el mundo sensible son copias imperfectas de las Formas en el mundo inteligible. Por ejemplo, una silla particular en el mundo sensible es una copia imperfecta de la Forma de la Silla en el mundo inteligible.\n\n**Ética virtuosa**\n\nPlatón creía que el propósito de la vida era lograr la virtud. La virtud era la excelencia del carácter, que incluía cualidades como la sabiduría, la templanza, el coraje y la justicia. La virtud se podía lograr mediante el conocimiento y el autocontrol.\n\n**2. Ejemplos prácticos**\n\n* **Mundo sensible:** Una pintura de un paisaje.\n* **Mundo inteligible:** La Forma del Paisaje, que representa la esencia o idea perfecta de un paisaje.\n* **Virtud de la sabiduría:** Un filósofo que busca el conocimiento y comprende la naturaleza del mundo.\n\n**3. Puntos clave a recordar**\n\n* Platón creía que el mundo estaba dividido en el mundo sensible y el mundo inteligible.\n* La teoría de las Formas postula que el mundo sensible es una sombra del mundo inteligible.\n* La virtud era el objetivo principal de la vida y se podía lograr mediante el conocimiento.\n\n**4. Referencias o recursos adicionales**\n\n* La República de Platón\n* El Simposio de Platón\n* El Fedón de Platón\n* Historia de la Filosofía Griega, Volumen I, por W.K.C. Guthrie",
+                  "createdAt": "2024-12-07T02:44:18.053Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "subject": "Filozofia",
+                  "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+                  "title": "platon",
+                  "updatedAt": "2024-12-07T02:44:18.053Z",
+                  "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+                },
+                "1dbc572f-d1cb-46ed-9ff8-aec3fc576471": {
+                  "content": "Platon era un filosofo griego etc",
+                  "createdAt": "2024-12-07T01:32:50.713Z",
+                  "createdBy": "user_2pDksB8JmmBe3y5JZFSR1sStstt",
+                  "id": "1dbc572f-d1cb-46ed-9ff8-aec3fc576471",
+                  "subject": "Filozofia",
+                  "subjectId": "967f37af-7481-45a5-b09a-8656adb76bf0",
+                  "title": "Platon",
+                  "updatedAt": "2024-12-07T20:44:54.868Z",
+                  "userId": "user_2pDksB8JmmBe3y5JZFSR1sStstt"
+                }
+              },
+              "updatedAt": "2024-12-07T01:56:25.389Z"
+            }
+          ],
+          "startTime": "2024-12-08T15:57:34.535Z",
+          "timestamp": "2024-12-08T15:59:25.751Z",
+          "totalQuestions": 10
+        }
+      }
     }
   }
 }

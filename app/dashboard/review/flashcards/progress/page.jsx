@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { ref, get } from "firebase/database";
-import { realtimeDb } from "@/configs/firebaseConfig";
+import { realtimeDb } from "@/configs/firebaseConfig"; 
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,7 @@ import {
 import { motion } from "framer-motion";
 
 const FlashcardsProgressPage = () => {
-  const [progress, setProgress] = useState(null);
-  const [flashcardHistory, setFlashcardHistory] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
 
@@ -33,49 +32,94 @@ const FlashcardsProgressPage = () => {
 
   const loadProgress = async () => {
     try {
-      // Cargar progreso general
-      const progressRef = ref(realtimeDb, `users/${user.id}/flashcardsProgress`);
-      const progressSnapshot = await get(progressRef);
+      // Cargar sesiones de flashcards
+      const sessionsRef = ref(realtimeDb, `users/${user.id}/flashcardSessions`);
+      const sessionsSnapshot = await get(sessionsRef);
       
-      // Cargar historial de sesiones
-      const historyRef = ref(realtimeDb, `users/${user.id}/flashcardSessions`);
-      const historySnapshot = await get(historyRef);
-      
-      if (progressSnapshot.exists()) {
-        setProgress(progressSnapshot.val());
-      }
-      
-      if (historySnapshot.exists()) {
-        const historyData = historySnapshot.val();
-        
-        const processedHistory = Object.entries(historyData)
-          .map(([key, data]) => ({
-            id: key,
-            ...data,
-            dateObj: new Date(data.timestamp || data.date),
-            displayDate: new Date(data.timestamp || data.date).toLocaleDateString('es-ES', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-          }))
-          .sort((a, b) => b.dateObj - a.dateObj)
-          .filter((session, index, self) => 
-            index === self.findIndex((s) => 
-              Math.abs(s.dateObj - session.dateObj) < 1000
-            )
-          )
-          .map(({ dateObj, ...session }) => session);
+      if (sessionsSnapshot.exists()) {
+        const sessionsData = sessionsSnapshot.val();
+        const processedSessions = Object.entries(sessionsData)
+          .map(([key, data]) => {
+            const total = data.stats?.total || (data.flashcards ? data.flashcards.length : 0);
+            const mastered = data.stats?.mastered || 0;
+            const completionRate = total > 0 ? (mastered / total) * 100 : 0;
 
-        setFlashcardHistory(processedHistory);
+            return {
+              id: key,
+              ...data,
+              total,
+              mastered,
+              completionRate,
+              dateObj: new Date(parseInt(key)),
+              displayDate: new Date(parseInt(key)).toLocaleDateString('es-ES', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })
+            };
+          })
+          .sort((a, b) => b.dateObj - a.dateObj);
+
+        setSessions(processedSessions);
+      } else {
+        setSessions([]);
       }
     } catch (error) {
       console.error("Error loading progress:", error);
+      setSessions([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const calculateStats = () => {
+    if (sessions.length === 0) return {
+      totalSessions: 0,
+      totalCards: 0,
+      masteredCards: 0,
+      averageCompletionRate: 0,
+      streak: 0
+    };
+
+    const stats = sessions.reduce((acc, session) => {
+      const total = session.total || 0;
+      const mastered = session.mastered || 0;
+      const completionRate = session.completionRate || 0;
+      
+      acc.totalCards += total;
+      acc.masteredCards += mastered;
+      acc.totalCompletionRate += completionRate;
+      return acc;
+    }, {
+      totalCards: 0,
+      masteredCards: 0,
+      totalCompletionRate: 0
+    });
+
+    // Calcular racha
+    let streak = 0;
+    const today = new Date().setHours(0, 0, 0, 0);
+    let lastDate = today;
+    
+    for (const session of sessions) {
+      const sessionDate = session.dateObj.setHours(0, 0, 0, 0);
+      if (sessionDate === lastDate || sessionDate === lastDate - 86400000) {
+        streak++;
+        lastDate = sessionDate;
+      } else {
+        break;
+      }
+    }
+
+    return {
+      totalSessions: sessions.length,
+      totalCards: stats.totalCards,
+      masteredCards: stats.masteredCards,
+      averageCompletionRate: sessions.length > 0 ? stats.totalCompletionRate / sessions.length : 0,
+      streak
+    };
   };
 
   if (loading) {
@@ -88,22 +132,6 @@ const FlashcardsProgressPage = () => {
       </div>
     );
   }
-
-  const calculateStats = () => {
-    if (!progress) return {
-      totalSessions: 0,
-      totalCards: 0,
-      masteredCards: 0,
-      averageCompletionRate: 0
-    };
-    
-    return {
-      totalSessions: progress.totalSessions || 0,
-      totalCards: progress.totalCards || 0,
-      masteredCards: progress.masteredCards || 0,
-      averageCompletionRate: progress.averageCompletionRate || 0
-    };
-  };
 
   const stats = calculateStats();
 
@@ -147,12 +175,12 @@ const FlashcardsProgressPage = () => {
         >
           <Card className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <HiOutlineCollection className="h-6 w-6 text-blue-600" />
+              <div className="p-3 bg-orange-100 rounded-lg">
+                <HiOutlineAcademicCap className="h-6 w-6 text-orange-600" />
               </div>
               <div>
-                <h3 className="text-sm text-gray-500">Sesiones Completadas</h3>
-                <p className="text-2xl font-bold">{stats.totalSessions}</p>
+                <h3 className="text-sm text-gray-500">Racha Actual</h3>
+                <p className="text-2xl font-bold text-orange-600">{stats.streak} días</p>
               </div>
             </div>
           </Card>
@@ -180,41 +208,54 @@ const FlashcardsProgressPage = () => {
       {/* Historial de Sesiones */}
       <h2 className="text-xl font-semibold mb-4">Historial de Sesiones</h2>
       <div className="space-y-4">
-        {flashcardHistory.map((session) => (
-          <motion.div
-            key={session.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="group"
-          >
-            <Card className="p-6 hover:shadow-lg transition-all">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <HiOutlineClock className="text-gray-400" />
-                    <span className="text-sm text-gray-500">{session.displayDate}</span>
+        {sessions.length === 0 ? (
+          <Card className="p-6 text-center text-gray-500">
+            <HiOutlineCollection className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+            <p>No hay sesiones de estudio registradas aún.</p>
+            <p className="text-sm">¡Comienza a estudiar con flashcards para ver tu progreso aquí!</p>
+          </Card>
+        ) : (
+          sessions.map((session) => (
+            <motion.div
+              key={session.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="group"
+            >
+              <Card className="p-6 hover:shadow-lg transition-all">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <HiOutlineClock className="text-gray-400" />
+                      <span className="text-sm text-gray-500">{session.displayDate}</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center text-green-600">
+                        <HiOutlineCheck className="mr-1" />
+                        {session.mastered} dominadas
+                      </div>
+                      <div>
+                        {session.total} tarjetas totales
+                      </div>
+                    </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center text-green-600">
-                      <HiOutlineCheck className="mr-1" />
-                      {session.mastered} dominadas
+                    <div className="text-right">
+                      <div className="text-sm text-gray-500">Tasa de Éxito</div>
+                      <div className="text-xl font-bold">
+                        {session.completionRate.toFixed(1)}%
+                      </div>
                     </div>
-                    <div>
-                      {session.total} tarjetas totales
-                    </div>
+                    <Progress 
+                      value={session.completionRate} 
+                      className="w-32 h-2" 
+                    />
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <div className="text-sm text-gray-500">Tasa de Éxito</div>
-                    <div className="text-xl font-bold">{session.completionRate?.toFixed(1)}%</div>
-                  </div>
-                  <Progress value={session.completionRate} className="w-32 h-2" />
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
+              </Card>
+            </motion.div>
+          ))
+        )}
       </div>
     </div>
   );
