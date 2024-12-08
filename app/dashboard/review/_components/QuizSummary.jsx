@@ -1,14 +1,33 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { HiOutlineAcademicCap, HiOutlineChartBar, HiOutlineRefresh } from "react-icons/hi";
+import { HiOutlineAcademicCap, HiOutlineChartBar, HiOutlineRefresh, HiOutlineTrendingUp } from "react-icons/hi";
 import { motion } from "framer-motion";
 
-const QuizSummary = ({ results, onRetry }) => {
-  const totalQuestions = results.correctAnswers + results.incorrectAnswers;
+const QuizSummary = ({ results, onRetry, saveProgress, totalQuestions }) => {
+  const [progress, setProgress] = useState(null);
+  const [saving, setSaving] = useState(true);
   const score = (results.correctAnswers / totalQuestions) * 100;
+
+  useEffect(() => {
+    const saveQuizResults = async () => {
+      try {
+        const savedData = await saveProgress();
+        if (savedData) {
+          setProgress(savedData.progress);
+        }
+      } catch (error) {
+        console.error("Error saving quiz results:", error);
+      } finally {
+        setSaving(false);
+      }
+    };
+
+    saveQuizResults();
+  }, [saveProgress]);
   
   return (
     <motion.div
@@ -81,11 +100,43 @@ const QuizSummary = ({ results, onRetry }) => {
             </motion.div>
           </div>
 
+          {/* Overall Progress */}
+          {progress && (
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.9 }}
+              className="bg-blue-50 p-4 rounded-lg space-y-3"
+            >
+              <div className="flex items-center gap-2">
+                <HiOutlineTrendingUp className="text-blue-500" />
+                <h3 className="font-semibold">Progreso General</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm text-gray-500">Promedio General</div>
+                  <div className="font-semibold text-blue-600">
+                    {Math.round(progress.averageScore)}%
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Quizzes Completados</div>
+                  <div className="font-semibold text-blue-600">
+                    {progress.totalQuizzes}
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm text-gray-600">
+                Total de preguntas respondidas: {progress.totalQuestions}
+              </div>
+            </motion.div>
+          )}
+
           {/* Performance Analysis */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.9 }}
+            transition={{ delay: 1.1 }}
             className="bg-gray-50 p-4 rounded-lg"
           >
             <div className="flex items-center gap-2 mb-2">
@@ -107,12 +158,13 @@ const QuizSummary = ({ results, onRetry }) => {
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 1.1 }}
+            transition={{ delay: 1.3 }}
             className="flex justify-center pt-4"
           >
             <Button
               onClick={onRetry}
               className="bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white"
+              disabled={saving}
             >
               <HiOutlineRefresh className="mr-2 h-4 w-4" />
               Intentar Nuevo Quiz

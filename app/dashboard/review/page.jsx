@@ -8,7 +8,8 @@ import {
   HiOutlineDocumentText,
   HiOutlineLightBulb,
   HiOutlineChevronRight,
-  HiOutlineCollection
+  HiOutlineCollection,
+  HiOutlineChartBar
 } from "react-icons/hi";
 
 const ReviewPage = () => {
@@ -28,14 +29,25 @@ const ReviewPage = () => {
           <p className="text-gray-600 mb-4">
             Pon a prueba tus conocimientos con quizzes dinámicos.
           </p>
-          <Link href="/dashboard/review/quiz">
-            <Button 
-              className="w-full bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white hover:opacity-90"
-            >
-              Comenzar Quiz
-              <HiOutlineChevronRight className="ml-2" />
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/dashboard/review/quiz" className="flex-1">
+              <Button 
+                className="w-full bg-gradient-to-r from-[#FF5F13] to-[#FBB041] text-white hover:opacity-90"
+              >
+                Comenzar Quiz
+                <HiOutlineChevronRight className="ml-2" />
+              </Button>
+            </Link>
+            <Link href="/dashboard/review/progress">
+              <Button 
+                variant="outline"
+                size="icon"
+                className="border-orange-200 text-orange-600 hover:bg-orange-50 w-10 h-10"
+              >
+                <HiOutlineChartBar className="h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
         </Card>
 
         {/* Flashcard Card */}
