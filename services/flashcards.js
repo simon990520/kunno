@@ -37,37 +37,72 @@ Reglas para generar el contenido:
 
     const text = await generateContent(prompt);
 
-    let jsonStr = text;
+    // Limpiar y extraer el JSON
+    let jsonStr = text.trim();
     
-    if (text.includes('{') && text.includes('}')) {
-      const start = text.indexOf('{');
-      const end = text.lastIndexOf('}') + 1;
-      jsonStr = text.slice(start, end);
+    // Buscar el JSON entre llaves
+    const start = jsonStr.indexOf('{');
+    const end = jsonStr.lastIndexOf('}') + 1;
+    
+    if (start === -1 || end === -1) {
+      console.error('No se encontró un objeto JSON válido en la respuesta:', text);
+      throw new Error('La respuesta no contiene un JSON válido');
     }
+    
+    jsonStr = jsonStr.slice(start, end);
 
+    // Intentar parsear el JSON
     let parsedFlashcards;
     try {
       parsedFlashcards = JSON.parse(jsonStr);
     } catch (error) {
-      console.error('Error parsing JSON:', jsonStr);
+      console.error('Error parsing JSON:', {
+        error: error.message,
+        jsonStr: jsonStr
+      });
       throw new Error('El formato de la respuesta no es válido');
     }
 
-    if (!parsedFlashcards.flashcards || !Array.isArray(parsedFlashcards.flashcards)) {
-      throw new Error('Estructura de flashcards inválida');
+    // Validar la estructura
+    if (!parsedFlashcards || typeof parsedFlashcards !== 'object') {
+      throw new Error('La respuesta no es un objeto JSON válido');
     }
 
-    const processedFlashcards = parsedFlashcards.flashcards.map(flashcard => {
-      if (!flashcard.front || !flashcard.back || !flashcard.topic) {
-        throw new Error('Flashcard incompleta');
+    if (!parsedFlashcards.flashcards || !Array.isArray(parsedFlashcards.flashcards)) {
+      throw new Error('La respuesta no contiene un array de flashcards válido');
+    }
+
+    if (parsedFlashcards.flashcards.length === 0) {
+      throw new Error('No se generaron flashcards');
+    }
+
+    // Procesar y validar cada flashcard
+    const processedFlashcards = parsedFlashcards.flashcards.map((flashcard, index) => {
+      // Validar campos requeridos
+      if (!flashcard.front || typeof flashcard.front !== 'string') {
+        throw new Error(`Flashcard ${index + 1}: El campo 'front' es inválido`);
+      }
+      if (!flashcard.back || typeof flashcard.back !== 'string') {
+        throw new Error(`Flashcard ${index + 1}: El campo 'back' es inválido`);
+      }
+      if (!flashcard.topic || typeof flashcard.topic !== 'string') {
+        throw new Error(`Flashcard ${index + 1}: El campo 'topic' es inválido`);
       }
 
+      // Validar y normalizar la dificultad
+      const validDifficulties = ['basic', 'intermediate', 'advanced'];
+      const difficulty = String(flashcard.difficulty || 'intermediate').toLowerCase();
+      if (!validDifficulties.includes(difficulty)) {
+        console.warn(`Flashcard ${index + 1}: Dificultad inválida '${difficulty}', usando 'intermediate'`);
+      }
+
+      // Crear la flashcard procesada
       return {
         id: generateId(),
         front: String(flashcard.front).trim(),
         back: String(flashcard.back).trim(),
         topic: String(flashcard.topic).trim(),
-        difficulty: String(flashcard.difficulty || 'intermediate').trim(),
+        difficulty: validDifficulties.includes(difficulty) ? difficulty : 'intermediate',
         status: 'new',
         lastReviewed: null,
         nextReview: null,
@@ -79,7 +114,7 @@ Reglas para generar el contenido:
     return processedFlashcards;
   } catch (error) {
     console.error('Error generando flashcards:', error);
-    throw new Error('Error al generar las flashcards. Por favor, intenta de nuevo.');
+    throw new Error(`Error al generar las flashcards: ${error.message}`);
   }
 };
 
