@@ -8,11 +8,13 @@ import { Card } from "@/components/ui/card";
 import { HiOutlineBookOpen, HiOutlineDocumentText, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineLightBulb, HiOutlineTrendingUp } from "react-icons/hi";
 import { motion } from "framer-motion";
 import Link from 'next/link';
+import { Loader2 } from "lucide-react";
 
 const FlashcardSelector = ({ subjects, notes, onStart }) => {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [selectedNotes, setSelectedNotes] = useState([]);
   const [step, setStep] = useState('subjects'); // 'subjects' or 'notes'
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     setSelectedSubjects([]);
@@ -42,11 +44,16 @@ const FlashcardSelector = ({ subjects, notes, onStart }) => {
 
   const canProceed = step === 'subjects' ? selectedSubjects.length > 0 : selectedNotes.length > 0;
 
-  const handleStartSession = () => {
-    onStart(selectedSubjects, selectedNotes);
-    setSelectedSubjects([]);
-    setSelectedNotes([]);
-    setStep('subjects');
+  const handleStartSession = async () => {
+    setIsGenerating(true);
+    try {
+      await onStart(selectedSubjects, selectedNotes);
+    } finally {
+      setIsGenerating(false);
+      setSelectedSubjects([]);
+      setSelectedNotes([]);
+      setStep('subjects');
+    }
   };
 
   return (
@@ -175,6 +182,7 @@ const FlashcardSelector = ({ subjects, notes, onStart }) => {
           <Button
             variant="outline"
             onClick={() => setStep('subjects')}
+            disabled={isGenerating}
           >
             <HiOutlineChevronLeft className="mr-2 h-4 w-4" />
             Volver a Materias
@@ -184,7 +192,7 @@ const FlashcardSelector = ({ subjects, notes, onStart }) => {
           {step === 'subjects' ? (
             <Button
               onClick={() => setStep('notes')}
-              disabled={!canProceed}
+              disabled={!canProceed || isGenerating}
               className="bg-gradient-to-r from-blue-500 to-blue-600 text-white"
             >
               Seleccionar Apuntes
@@ -194,11 +202,20 @@ const FlashcardSelector = ({ subjects, notes, onStart }) => {
             <div className="flex gap-2">
               <Button
                 onClick={handleStartSession}
-                disabled={!canProceed}
+                disabled={!canProceed || isGenerating}
                 className="bg-gradient-to-r from-blue-500 to-blue-600 text-white"
               >
-                Crear Flashcards
-                <HiOutlineLightBulb className="ml-2 h-4 w-4" />
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generando Flashcards...
+                  </>
+                ) : (
+                  <>
+                    Crear Flashcards
+                    <HiOutlineLightBulb className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
             </div>
           )}

@@ -35,7 +35,9 @@ const FlashcardsPage = () => {
   const [sessionStats, setSessionStats] = useState({
     mastered: 0,
     reviewing: 0,
-    total: 0
+    total: 0,
+    completed: 0,
+    sessionId: null
   });
   const [sessionStartTime, setSessionStartTime] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
@@ -45,7 +47,7 @@ const FlashcardsPage = () => {
   useEffect(() => {
     if (user) {
       loadSubjectsAndNotes();
-      loadSavedFlashcards();
+      loadFlashcards();
     }
   }, [user]);
 
@@ -93,18 +95,26 @@ const FlashcardsPage = () => {
     }
   };
 
-  const loadSavedFlashcards = async () => {
+  const loadFlashcards = async () => {
     try {
-      const flashcardsRef = ref(realtimeDb, `users/${user.id}/flashcards`);
-      const snapshot = await get(flashcardsRef);
-      
-      if (snapshot.exists()) {
-        const savedFlashcards = snapshot.val();
-        setFlashcards(savedFlashcards);
-        updateSessionStats(savedFlashcards);
+      if (sessionStats.sessionId) {
+        const flashcardsRef = ref(realtimeDb, `users/${user.id}/flashcardSessions/${sessionStats.sessionId}`);
+        const snapshot = await get(flashcardsRef);
+        
+        if (snapshot.exists()) {
+          const sessionData = snapshot.val();
+          setFlashcards(sessionData.flashcards);
+          if (sessionData.stats) {
+            setSessionStats(prev => ({
+              ...prev,
+              ...sessionData.stats
+            }));
+          }
+        }
       }
     } catch (error) {
       console.error("Error loading flashcards:", error);
+      toast.error("Error al cargar las flashcards");
     }
   };
 
@@ -119,79 +129,89 @@ const FlashcardsPage = () => {
       );
 
       if (flashcardsData && flashcardsData.length > 0) {
+        // Generar un ID único para la sesión
+        const sessionId = Date.now().toString();
+        
+        const initialStats = {
+          total: flashcardsData.length,
+          completed: 0,
+          mastered: 0,
+          reviewing: 0
+        };
+
+        // Guardar flashcards en una nueva ruta con el ID de sesión
+        const flashcardsRef = ref(realtimeDb, `users/${user.id}/flashcardSessions/${sessionId}`);
+        await set(flashcardsRef, {
+          flashcards: flashcardsData,
+          createdAt: Date.now(),
+          subjects: selectedSubjects.map(s => s.name),
+          stats: initialStats,
+          lastUpdated: Date.now()
+        });
+        
         setFlashcards(flashcardsData);
-        setSessionStats(prev => ({
-          ...prev,
-          total: flashcardsData.length
-        }));
+        setSessionStats({
+          ...initialStats,
+          sessionId
+        });
         setSessionStartTime(Date.now());
+        
+        toast.success("¡Flashcards generadas con éxito!");
       } else {
         toast.error("No se encontraron apuntes para generar flashcards");
       }
     } catch (error) {
       console.error("Error generating flashcards:", error);
-      toast.error("Error al generar las flashcards");
+      toast.error(error.message || "Error al generar las flashcards");
     }
-  };
-
-  const updateSessionStats = (cards) => {
-    if (!Array.isArray(cards)) return;
-    
-    const stats = cards.reduce((acc, card) => ({
-      mastered: acc.mastered + (card.status === 'mastered' ? 1 : 0),
-      reviewing: acc.reviewing + (card.status === 'reviewing' ? 1 : 0),
-      total: acc.total + 1
-    }), { mastered: 0, reviewing: 0, total: 0 });
-
-    setSessionStats(stats);
   };
 
   const handleCardStatus = async (status) => {
-    if (!flashcards || !Array.isArray(flashcards) || flashcards.length === 0) return;
+    if (!flashcards || !sessionStats.sessionId) return;
 
-    const updatedFlashcards = [...flashcards];
-    const currentCard = updatedFlashcards[currentIndex];
-    
-    currentCard.status = status;
-    currentCard.reviewCount = (currentCard.reviewCount || 0) + 1;
-    currentCard.lastReviewed = new Date().toISOString();
-    currentCard.nextReview = calculateNextReview(status, currentCard.reviewCount).toISOString();
+    const updatedFlashcards = flashcards.map(card => {
+      if (card.id === flashcards[currentIndex].id) {
+        return {
+          ...card,
+          status,
+          lastReviewed: Date.now(),
+          reviewCount: (card.reviewCount || 0) + 1
+        };
+      }
+      return card;
+    });
 
     setFlashcards(updatedFlashcards);
-    updateSessionStats(updatedFlashcards);
 
-    // Si es la última tarjeta, guardar progreso y mostrar resumen
-    if (currentIndex === flashcards.length - 1) {
-      const timeSpent = Math.floor((Date.now() - sessionStartTime) / 1000);
-      const averageTime = Math.floor(timeSpent / sessionStats.total);
-      const completionRate = (sessionStats.mastered / sessionStats.total) * 100;
+    // Actualizar estadísticas de la sesión
+    const newStats = {
+      ...sessionStats,
+      mastered: updatedFlashcards.filter(card => card.status === 'mastered').length,
+      reviewing: updatedFlashcards.filter(card => card.status === 'reviewing').length,
+      completed: updatedFlashcards.filter(card => card.status !== 'new').length
+    };
+    setSessionStats(newStats);
 
-      const summary = {
-        timeSpent,
-        averageTime,
-        completionRate,
-        mastered: sessionStats.mastered,
-        reviewing: sessionStats.reviewing,
-        total: sessionStats.total
-      };
-
-      const timestamp = Date.now();
-      const progressRef = ref(realtimeDb, `users/${user.id}/progress/${timestamp}`);
-      await set(progressRef, {
-        timestamp,
-        date: new Date().toISOString(),
-        ...summary
+    try {
+      // Guardar en Firebase
+      const flashcardsRef = ref(realtimeDb, `users/${user.id}/flashcardSessions/${sessionStats.sessionId}`);
+      await set(flashcardsRef, {
+        flashcards: updatedFlashcards,
+        stats: {
+          total: newStats.total,
+          completed: newStats.completed,
+          mastered: newStats.mastered,
+          reviewing: newStats.reviewing
+        },
+        lastUpdated: Date.now()
       });
-
-      setSessionSummary(summary);
-      setShowSummary(true);
-    } else {
-      handleNext();
+    } catch (error) {
+      console.error('Error saving flashcard status:', error);
+      toast.error('Error al guardar el progreso');
     }
 
-    // Guardar en Firebase
-    const flashcardsRef = ref(realtimeDb, `users/${user.id}/flashcards`);
-    await set(flashcardsRef, updatedFlashcards);
+    // Avanzar a la siguiente tarjeta
+    handleNext();
   };
 
   const handleNext = () => {
@@ -213,301 +233,166 @@ const FlashcardsPage = () => {
   };
 
   const resetSession = () => {
-    setFlashcards(null);
     setCurrentIndex(0);
-    setIsFlipped(false);
+    setFlashcards([]);
     setSessionStats({
       mastered: 0,
       reviewing: 0,
-      total: 0
+      total: 0,
+      completed: 0,
+      sessionId: null
     });
     setShowSummary(false);
     setSessionSummary(null);
     setSessionStartTime(null);
   };
 
-  if (loading) {
+  // Obtener la tarjeta actual
+  const currentCard = flashcards && flashcards.length > 0 ? flashcards[currentIndex] : null;
+
+  // Renderizar el selector si no hay flashcards
+  if (!flashcards || flashcards.length === 0) {
     return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Flashcards</h1>
-        <Card className="p-6">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="w-16 h-16 relative">
-              <div className="w-16 h-16 rounded-full border-4 border-blue-200 border-t-blue-500 animate-spin"></div>
-            </div>
-            <h2 className="text-lg font-medium">{loadingStatus.message}</h2>
-            <div className="w-full max-w-md">
-              <Progress 
-                value={
-                  loadingStatus.status === 'starting' ? 20 :
-                  loadingStatus.status === 'preparing' ? 40 :
-                  loadingStatus.status === 'generating' ? 60 :
-                  loadingStatus.status === 'processing' ? 80 :
-                  loadingStatus.status === 'completed' ? 100 : 0
-                } 
-                className="h-2"
-              />
-            </div>
-          </div>
-        </Card>
+      <div className="container mx-auto p-6">
+        <FlashcardSelector
+          subjects={subjects}
+          notes={notes}
+          onStart={handleStartFlashcards}
+        />
       </div>
     );
   }
 
-  if (showSummary) {
+  // Renderizar el resumen si se completó la sesión
+  if (showSummary && sessionSummary) {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-          className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4"
-        >
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6 text-center">¡Sesión Completada!</h2>
-            
-            <div className="grid grid-cols-2 gap-6 mb-8">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <Card className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-100 rounded-lg">
-                      <HiOutlineTrendingUp className="w-6 h-6 text-green-600" />
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-500">Tasa de Éxito</div>
-                      <div className="text-2xl font-bold text-green-600">
-                        {Math.round(sessionSummary.completionRate)}%
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Card className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <HiOutlineClock className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-500">Tiempo Total</div>
-                      <div className="text-2xl font-bold">
-                        {Math.floor(sessionSummary.timeSpent / 60)}:{String(sessionSummary.timeSpent % 60).padStart(2, '0')}
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="mb-8"
-            >
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Resumen de Tarjetas</h3>
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <div className="text-sm text-gray-500">Dominadas</div>
-                    <div className="text-xl font-bold text-green-600">
-                      {sessionSummary.mastered}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500">En Revisión</div>
-                    <div className="text-xl font-bold text-orange-600">
-                      {sessionSummary.reviewing}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500">Total</div>
-                    <div className="text-xl font-bold">
-                      {sessionSummary.total}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex justify-center gap-4"
-            >
-              <Button
-                onClick={() => {
-                  resetSession();
-                }}
-                className="flex items-center gap-2"
-              >
-                <HiOutlineRefresh className="w-5 h-5" />
-                Nueva Sesión
-              </Button>
-              <Link href="/dashboard/review/flashcards/progress">
-                <Button
-                  variant="outline"
-                  className="flex items-center gap-2"
-                >
-                  <HiOutlineChartBar className="w-5 h-5" />
-                  Ver Progreso Completo
-                </Button>
-              </Link>
-            </motion.div>
-          </div>
-        </motion.div>
+      <div className="container mx-auto p-6">
+        <SessionSummary
+          summary={sessionSummary}
+          onRestart={() => {
+            resetSession();
+            setShowSummary(false);
+          }}
+        />
       </div>
     );
   }
 
-  if (!flashcards) {
-    return <FlashcardSelector subjects={subjects} notes={notes} onStart={handleStartFlashcards} />;
-  }
-
-  const currentCard = flashcards[currentIndex];
-
+  // Renderizar la interfaz de flashcards
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Flashcards</h1>
-        <Button variant="outline" onClick={() => setFlashcards(null)}>
-          Seleccionar Otro Contenido
-        </Button>
+    <div className="container mx-auto p-6">
+      {/* Barra de progreso y estadísticas */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                resetSession();
+                setShowSummary(false);
+              }}
+              className="flex items-center gap-2"
+            >
+              <HiOutlineChevronLeft className="w-4 h-4" />
+              Volver
+            </Button>
+            <div className="text-sm text-gray-500">
+              Tarjeta {currentIndex + 1} de {flashcards.length}
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <HiOutlineCheck className="w-4 h-4 text-green-500" />
+              <span className="text-sm text-gray-500">
+                {sessionStats.mastered} dominadas
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <HiOutlineRefresh className="w-4 h-4 text-orange-500" />
+              <span className="text-sm text-gray-500">
+                {sessionStats.reviewing} repasando
+              </span>
+            </div>
+          </div>
+        </div>
+        <Progress value={(currentIndex / flashcards.length) * 100} className="h-2" />
       </div>
 
-      {/* Progreso de la sesión */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <Card className="p-4">
-          <div className="text-center">
-            <div className="text-sm text-gray-500">Dominadas</div>
-            <div className="text-2xl font-bold text-green-600">
-              {sessionStats.mastered}
-            </div>
-          </div>
-        </Card>
-        <Card className="p-4">
-          <div className="text-center">
-            <div className="text-sm text-gray-500">En Revisión</div>
-            <div className="text-2xl font-bold text-orange-600">
-              {sessionStats.reviewing}
-            </div>
-          </div>
-        </Card>
-        <Card className="p-4">
-          <div className="text-center">
-            <div className="text-sm text-gray-500">Total</div>
-            <div className="text-2xl font-bold">
-              {sessionStats.total}
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Flashcard */}
-      <div className="flex justify-center mb-6">
-        <div className="w-full max-w-2xl perspective">
+      {/* Tarjeta de flashcard */}
+      {currentCard && (
+        <div className="max-w-2xl mx-auto">
           <motion.div
-            key={currentIndex}
+            key={currentCard.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <Card 
-              className={`p-8 cursor-pointer transition-all duration-500 min-h-[300px] ${
-                isFlipped ? 'bg-blue-50' : ''
-              }`}
-              onClick={handleFlip}
-            >
-              <div className="flex flex-col h-full">
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-                  <HiOutlineBookOpen className="w-4 h-4" />
-                  <span>{currentCard.topic}</span>
-                  <span className="px-2 py-1 rounded-full bg-gray-100 text-xs">
-                    {currentCard.difficulty}
-                  </span>
-                </div>
-                
-                <div className="flex-grow">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={isFlipped ? 'back' : 'front'}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.3 }}
-                      className="h-full"
-                    >
-                      {isFlipped ? (
-                        <div className="prose prose-blue max-w-none">
-                          {currentCard.back}
-                        </div>
-                      ) : (
-                        <div className="text-xl font-medium">
-                          {currentCard.front}
-                        </div>
-                      )}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
+            <Card className="p-6">
+              <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+                <HiOutlineBookOpen className="w-4 h-4" />
+                <span>{currentCard.topic}</span>
+                <span className="px-2 py-1 rounded-full bg-gray-100 text-xs">
+                  {currentCard.difficulty}
+                </span>
+              </div>
 
-                <div className="text-sm text-gray-500 mt-4 text-center">
-                  {isFlipped ? "Click para ver el concepto" : "Click para ver la explicación"}
+              <div
+                className={`relative min-h-[200px] flex items-center justify-center p-6 rounded-lg transition-all duration-500 ${
+                  isFlipped ? 'bg-blue-50' : 'bg-gray-50'
+                }`}
+                onClick={() => setIsFlipped(!isFlipped)}
+              >
+                <div className="text-center">
+                  {isFlipped ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="prose prose-blue max-w-none"
+                      dangerouslySetInnerHTML={{ __html: currentCard.back }}
+                    />
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="prose prose-blue max-w-none"
+                      dangerouslySetInnerHTML={{ __html: currentCard.front }}
+                    />
+                  )}
+                </div>
+                <div className="absolute bottom-4 right-4 text-gray-400">
+                  <HiOutlineRefresh className="w-5 h-5" />
                 </div>
               </div>
+
+              {isFlipped && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex gap-2 mt-4"
+                >
+                  <Button
+                    onClick={() => handleCardStatus('reviewing')}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Repasar Después
+                    <HiOutlineRefresh className="w-4 h-4 ml-2" />
+                  </Button>
+                  <Button
+                    onClick={() => handleCardStatus('mastered')}
+                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600"
+                  >
+                    ¡Lo Domino!
+                    <HiOutlineCheck className="w-4 h-4 ml-2" />
+                  </Button>
+                </motion.div>
+              )}
             </Card>
           </motion.div>
         </div>
-      </div>
-
-      {/* Controles */}
-      <div className="flex justify-between items-center">
-        <Button
-          variant="outline"
-          onClick={handlePrevious}
-          disabled={currentIndex === 0}
-        >
-          <HiOutlineChevronLeft className="mr-2" />
-          Anterior
-        </Button>
-
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className="border-red-200 text-red-600 hover:bg-red-50"
-            onClick={() => handleCardStatus('reviewing')}
-          >
-            <HiOutlineRefresh className="mr-2" />
-            Revisar
-          </Button>
-          <Button
-            variant="outline"
-            className="border-green-200 text-green-600 hover:bg-green-50"
-            onClick={() => handleCardStatus('mastered')}
-          >
-            <HiOutlineCheck className="mr-2" />
-            Dominado
-          </Button>
-        </div>
-
-        <Button
-          variant="outline"
-          onClick={handleNext}
-          disabled={currentIndex === flashcards.length - 1}
-        >
-          Siguiente
-          <HiOutlineChevronRight className="ml-2" />
-        </Button>
-      </div>
+      )}
     </div>
   );
 };

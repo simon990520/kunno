@@ -1,14 +1,8 @@
 import { generateContent } from "@/configs/AiModel";
 
-export const generateFlashcards = async (selectedSubjects, selectedNotes, onProgress) => {
+export const generateFlashcards = async (selectedSubjects, selectedNotes, userId) => {
   try {
-    onProgress({ status: 'starting', message: 'Iniciando generación de flashcards...' });
-    
     const content = prepareContent(selectedSubjects, selectedNotes);
-    
-    onProgress({ status: 'preparing', message: 'Analizando contenido...' });
-    
-    onProgress({ status: 'generating', message: 'Generando flashcards inteligentes...' });
     
     const prompt = `Actúa como un experto profesor y crea un conjunto de tarjetas de estudio basadas en este contenido. IMPORTANTE: Usa EXACTAMENTE el mismo idioma que está en el contenido proporcionado.
 
@@ -42,8 +36,6 @@ Reglas para generar el contenido:
 9. Asegúrate de que todo el contenido esté en el mismo idioma que los apuntes originales`;
 
     const text = await generateContent(prompt);
-    
-    onProgress({ status: 'processing', message: 'Procesando flashcards...' });
 
     let jsonStr = text;
     
@@ -65,7 +57,7 @@ Reglas para generar el contenido:
       throw new Error('Estructura de flashcards inválida');
     }
 
-    parsedFlashcards.flashcards = parsedFlashcards.flashcards.map(flashcard => {
+    const processedFlashcards = parsedFlashcards.flashcards.map(flashcard => {
       if (!flashcard.front || !flashcard.back || !flashcard.topic) {
         throw new Error('Flashcard incompleta');
       }
@@ -79,13 +71,12 @@ Reglas para generar el contenido:
         status: 'new',
         lastReviewed: null,
         nextReview: null,
-        reviewCount: 0
+        reviewCount: 0,
+        userId
       };
     });
-
-    onProgress({ status: 'completed', message: '¡Flashcards listas!' });
     
-    return parsedFlashcards;
+    return processedFlashcards;
   } catch (error) {
     console.error('Error generando flashcards:', error);
     throw new Error('Error al generar las flashcards. Por favor, intenta de nuevo.');
