@@ -92,6 +92,7 @@ const CourseBasicInfo = ({ course, refreshData,edit=true }) => {
           <label htmlFor="upload-image">
             <Image
               src={selectedFile ? selectedFile : "/course-cover.svg"}
+              alt={course?.courseOutput?.course?.name || "Course cover image"}
               width={600}
               height={300}
               className="w-ful rounded-xl h-[250px] object-cover cursor-pointer"

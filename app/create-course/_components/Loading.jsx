@@ -21,12 +21,18 @@ const Loading = ({loading}) => {
   <AlertDialogContent>
     <AlertDialogHeader>
     
-      <AlertDialogDescription>
-        <div className='flex items-center flex-col py-12'>
-            <Image src={'/LoadingCourse.gif'} width={100} height={100} />
-            <h2>Por favor espera... La IA está trabajando en tu curso.</h2>
-        </div>
-      </AlertDialogDescription>
+      <AlertDialogTitle className="sr-only">Generando Curso</AlertDialogTitle>
+      <div className='flex items-center flex-col py-12'>
+        <Image 
+          src={'/LoadingCourse.gif'} 
+          width={100} 
+          height={100} 
+          alt="Animación de carga mientras la IA genera el curso" 
+        />
+        <AlertDialogDescription className="text-center mt-4">
+          Por favor espera... La IA está trabajando en tu curso.
+        </AlertDialogDescription>
+      </div>
     </AlertDialogHeader>
     
   </AlertDialogContent>

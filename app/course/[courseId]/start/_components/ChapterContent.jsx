@@ -31,7 +31,7 @@ const ChapterContent = ({chapter, content}) => {
       {/* content  */}
       <div>
         {content?.content?.map((item,index)=>(
-            <div className='p-5 bg-slate-50 mb-3 rounded-md'>
+            <div key={index} className='p-5 bg-slate-50 mb-3 rounded-md'>
                 <h2 className='font-medium text-lg'>{item?.title}</h2>
                 {/* <p className='whitespace-pre-wrap mt-1 ml-2'>{item?.description}</p>
                  */}
