@@ -10,24 +10,14 @@ export default function Home() {
       {/* Header */}
       <nav className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg grid place-items-center">
-            <div className="grid grid-cols-2 gap-1">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-              <div className="w-2 h-2 bg-black rounded-full"></div>
-              <div className="w-2 h-2 bg-black rounded-full"></div>
-              <div className="w-2 h-2 bg-black rounded-full"></div>
-            </div>
-          </div>
-          <span className="font-semibold text-xl">ChronoTask</span>
+        <Image src={"/logo.png"} width={44} height={44} alt="Kunno App Logo" />
         </div>
         <div className="flex items-center gap-8">
-          <Link href="#features" className="text-gray-600 hover:text-gray-900">Features</Link>
-          <Link href="#solutions" className="text-gray-600 hover:text-gray-900">Solutions</Link>
-          <Link href="#resources" className="text-gray-600 hover:text-gray-900">Resources</Link>
-          <Link href="#pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link>
-          <Link href="/login" className="text-gray-600 hover:text-gray-900">Sign in</Link>
-          <Link href="/download" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-            Get demo
+          <Link href="/about" className="text-gray-600 hover:text-gray-900">Quiénes Somos</Link>
+          <Link href="/contact" className="text-gray-600 hover:text-gray-900">Contáctanos</Link>
+          <Link href="/terms" className="text-gray-600 hover:text-gray-900">Términos y Condiciones</Link>
+          <Link href="/dashboard" className="px-8 py-2 bg-gradient-to-r from-orange-500 to-yellow-400 text-white rounded-lg hover:opacity-90 transition-colors">
+            ¡Empieza ahora!
           </Link>
         </div>
       </nav>

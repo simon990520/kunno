@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function AnimatedHero() {
   return (
@@ -11,19 +12,32 @@ export default function AnimatedHero() {
       className="text-center mb-16"
     >
       <h1 className="text-6xl font-bold mb-4">
-        Think, plan, and track
-        <span className="block text-gray-400 mt-2">all in one place</span>
+        Aprende y refuerza
+        <span className="block text-gray-400 mt-2">tu conocimiento</span>
       </h1>
       <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-        Efficiently manage your tasks and boost productivity.
+        Plataforma interactiva con cursos, quizzes y flashcards para potenciar tu aprendizaje
       </p>
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-      >
-        Get free demo
-      </motion.button>
+      <div className="flex items-center justify-center gap-4">
+        <Link href="/explore-course">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-8 py-3 bg-gradient-to-r from-orange-500 to-yellow-400 text-white rounded-lg hover:opacity-90 transition-colors"
+          >
+            Explorar
+          </motion.button>
+        </Link>
+        <Link href="/download">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-8 py-2 border-4 border-orange-500 text-orange-500 rounded-lg hover:bg-orange-50 transition-colors"
+          >
+            Descargar App
+          </motion.button>
+        </Link>
+      </div>
     </motion.div>
   );
 }
